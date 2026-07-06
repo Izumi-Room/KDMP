@@ -1,0 +1,100 @@
+<%- include('../../partials/header') %>
+<%- include('../../partials/sidebar') %>
+
+<div class="main-wrapper">
+  <div class="page-header-nav">
+    <div>
+      <h1 class="h3 fw-bold mb-0">Edit UMKM</h1>
+      <p class="text-secondary mb-0" style="font-size: 14px;">Memperbarui profil UMKM dan kredensial admin pengelola</p>
+    </div>
+    <div>
+      <a href="/admin-system/umkm" class="btn btn-outline-secondary d-flex align-items-center gap-2" style="border-radius: 8px; padding: 10px 20px;">
+        <i class="bi bi-arrow-left"></i>
+        <span>Kembali</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="row fade-in">
+    <div class="col-lg-8">
+      <div class="glass-card p-4">
+        <%- include('../../partials/alerts') %>
+
+        <form action="/admin-system/umkm/<%= umkm.id %>" method="POST">
+          <input type="hidden" name="_method" value="POST"> <!-- Since we map POST /umkm/:id as update -->
+
+          <!-- UMKM Profile Section -->
+          <h3 class="h6 fw-bold text-primary mb-3 border-bottom pb-2">1. Data Profil UMKM</h3>
+          
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-secondary">Nama UMKM / Warung</label>
+            <input type="text" name="nama_umkm" class="form-control form-control-custom <%= errors.nama_umkm ? 'is-invalid' : '' %>" value="<%= old.nama_umkm || umkm.nama_umkm %>" required>
+            <% if (errors.nama_umkm) { %>
+              <div class="invalid-feedback"><%= errors.nama_umkm %></div>
+            <% } %>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold text-secondary">Nomor Telepon</label>
+              <input type="text" name="telepon" class="form-control form-control-custom <%= errors.telepon ? 'is-invalid' : '' %>" value="<%= old.telepon || umkm.telepon || '' %>">
+              <% if (errors.telepon) { %>
+                <div class="invalid-feedback"><%= errors.telepon %></div>
+              <% } %>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold text-secondary">Alamat Lengkap</label>
+              <textarea name="alamat" class="form-control form-control-custom <%= errors.alamat ? 'is-invalid' : '' %>" rows="1"><%= old.alamat || umkm.alamat || '' %></textarea>
+              <% if (errors.alamat) { %>
+                <div class="invalid-feedback"><%= errors.alamat %></div>
+              <% } %>
+            </div>
+          </div>
+
+          <!-- Admin Credentials Section -->
+          <h3 class="h6 fw-bold text-primary mt-4 mb-3 border-bottom pb-2">2. Akun Admin Pengelola</h3>
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold text-secondary">Username (ID Login)</label>
+              <input type="text" name="username" class="form-control form-control-custom <%= errors.username ? 'is-invalid' : '' %>" value="<%= old.username || (admin ? admin.username : '') %>" required>
+              <% if (errors.username) { %>
+                <div class="invalid-feedback"><%= errors.username %></div>
+              <% } %>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold text-secondary">Nama Lengkap Admin</label>
+              <input type="text" name="name" class="form-control form-control-custom <%= errors.name ? 'is-invalid' : '' %>" value="<%= old.name || (admin ? admin.name : '') %>" required>
+              <% if (errors.name) { %>
+                <div class="invalid-feedback"><%= errors.name %></div>
+              <% } %>
+            </div>
+          </div>
+
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold text-secondary">Alamat Email</label>
+              <input type="email" name="email" class="form-control form-control-custom <%= errors.email ? 'is-invalid' : '' %>" value="<%= old.email || (admin ? admin.email : '') %>">
+              <% if (errors.email) { %>
+                <div class="invalid-feedback"><%= errors.email %></div>
+              <% } %>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold text-secondary">Password Akses Baru</label>
+              <input type="password" name="password" class="form-control form-control-custom <%= errors.password ? 'is-invalid' : '' %>" placeholder="Kosongkan jika tidak ingin diubah">
+              <% if (errors.password) { %>
+                <div class="invalid-feedback"><%= errors.password %></div>
+              <% } %>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary-custom w-100 py-3 fw-semibold">
+            <i class="bi bi-save me-1"></i> Simpan Perubahan
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../../partials/footer') %>

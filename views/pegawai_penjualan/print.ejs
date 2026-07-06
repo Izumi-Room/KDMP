@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Struk Belanja - #<%= penjualan.no_faktur %></title>
+  <style>
+    body {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 12px;
+      color: #000;
+      margin: 0;
+      padding: 20px;
+      background: #fff;
+      max-width: 320px; /* Thermal printer width sizing constraint */
+      margin: auto;
+    }
+    .text-center { text-align: center; }
+    .text-right { text-align: right; }
+    .bold { font-weight: bold; }
+    .divider {
+      border-top: 1px dashed #000;
+      margin: 8px 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    table td {
+      padding: 2px 0;
+      vertical-align: top;
+    }
+    .footer-msg {
+      margin-top: 20px;
+      font-size: 10px;
+    }
+    .no-print-btn {
+      display: block;
+      width: 100%;
+      text-align: center;
+      background-color: #007bff;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    @media print {
+      .no-print-btn {
+        display: none !important;
+      }
+      body {
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Print button visible only on screen -->
+  <button onclick="window.print();" class="no-print-btn">CETAK STRUK BELANJA</button>
+
+  <div class="text-center">
+    <div class="bold" style="font-size: 14px;"><%= user.umkm?.nama_umkm || 'AIWarung' %></div>
+    <div><%= user.umkm?.alamat || '-' %></div>
+    <div>Telp: <%= user.umkm?.telepon || '-' %></div>
+    <div class="divider"></div>
+  </div>
+
+  <div>
+    <table>
+      <tr>
+        <td>Faktur:</td>
+        <td class="text-right"><%= penjualan.no_faktur %></td>
+      </tr>
+      <tr>
+        <td>Tanggal:</td>
+        <td class="text-right"><%= penjualan.tanggal %></td>
+      </tr>
+      <tr>
+        <td>Kasir:</td>
+        <td class="text-right"><%= penjualan.user?.name || '-' %></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Items list -->
+  <table>
+    <% penjualan.details.forEach(det => { %>
+      <tr>
+        <td colspan="2"><%= det.barang?.nama_barang || 'Barang Dihapus' %></td>
+      </tr>
+      <tr>
+        <td>&nbsp;&nbsp;<%= det.qty %> x Rp <%= Number(det.harga_satuan).toLocaleString('id-ID') %></td>
+        <td class="text-right">Rp <%= Number(det.subtotal).toLocaleString('id-ID') %></td>
+      </tr>
+    <% }) %>
+  </table>
+
+  <div class="divider"></div>
+
+  <!-- Summary -->
+  <table>
+    <tr class="bold">
+      <td>TOTAL:</td>
+      <td class="text-right">Rp <%= Number(penjualan.total_harga).toLocaleString('id-ID') %></td>
+    </tr>
+    <tr>
+      <td>BAYAR:</td>
+      <td class="text-right">Rp <%= Number(penjualan.bayar || 0).toLocaleString('id-ID') %></td>
+    </tr>
+    <tr>
+      <td>KEMBALI:</td>
+      <td class="text-right">Rp <%= Number(penjualan.kembali || 0).toLocaleString('id-ID') %></td>
+    </tr>
+  </table>
+
+  <div class="divider"></div>
+
+  <div class="text-center footer-msg">
+    <span>Terima Kasih Atas Kunjungan Anda</span><br>
+    <span>AIWarung - Solusi Pintar UMKM Mandiri</span>
+  </div>
+
+  <!-- Auto open print dialog on page load -->
+  <script>
+    window.addEventListener('load', function() {
+      // Auto triggers window print
+      setTimeout(() => { window.print(); }, 500);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<%- include('../partials/header') %>
+<%- include('../partials/sidebar') %>
+
+<div class="main-wrapper">
+  <div class="page-header-nav">
+    <div>
+      <h1 class="h3 fw-bold mb-0">Dashboard System Admin</h1>
+      <p class="text-secondary mb-0" style="font-size: 14px;">Selamat datang kembali di pusat kendali AIWarung</p>
+    </div>
+  </div>
+
+  <%- include('../partials/alerts') %>
+
+  <!-- Stats Grid -->
+  <div class="row g-4 mb-4 fade-in">
+    <div class="col-6 col-lg-3">
+      <div class="glass-card p-3 d-flex align-items-center gap-3">
+        <div class="stat-card-icon icon-blue">
+          <i class="bi bi-houses-fill"></i>
+        </div>
+        <div>
+          <h5 class="text-secondary mb-0" style="font-size: 13px;">Total UMKM</h5>
+          <div class="fs-4 fw-bold text-dark"><%= stats.total_umkm %></div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-6 col-lg-3">
+      <div class="glass-card p-3 d-flex align-items-center gap-3">
+        <div class="stat-card-icon icon-green">
+          <i class="bi bi-people-fill"></i>
+        </div>
+        <div>
+          <h5 class="text-secondary mb-0" style="font-size: 13px;">Total User</h5>
+          <div class="fs-4 fw-bold text-dark"><%= stats.total_users %></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 col-lg-3">
+      <div class="glass-card p-3 d-flex align-items-center gap-3">
+        <div class="stat-card-icon icon-orange">
+          <i class="bi bi-cart-check-fill"></i>
+        </div>
+        <div>
+          <h5 class="text-secondary mb-0" style="font-size: 13px;">Omset Sales</h5>
+          <div class="fs-5 fw-bold text-dark text-truncate" style="max-width: 130px;">
+            Rp <%= Number(stats.total_sales).toLocaleString('id-ID') %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 col-lg-3">
+      <div class="glass-card p-3 d-flex align-items-center gap-3">
+        <div class="stat-card-icon icon-red">
+          <i class="bi bi-bag-check-fill"></i>
+        </div>
+        <div>
+          <h5 class="text-secondary mb-0" style="font-size: 13px;">Restok Belanja</h5>
+          <div class="fs-5 fw-bold text-dark text-truncate" style="max-width: 130px;">
+            Rp <%= Number(stats.total_purchases).toLocaleString('id-ID') %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart & Recent Actions -->
+  <div class="row g-4 mb-4 fade-in">
+    <!-- Chart Column -->
+    <div class="col-lg-8">
+      <div class="glass-card p-4 h-100">
+        <h3 class="h6 fw-bold text-secondary mb-3">Tren Pendapatan & Pengeluaran Nasional (Tahun Ini)</h3>
+        <div style="height: 300px; position: relative;">
+          <canvas id="systemChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick action links -->
+    <div class="col-lg-4">
+      <div class="glass-card p-4 h-100 d-flex flex-column justify-content-between">
+        <div>
+          <h3 class="h6 fw-bold text-secondary mb-3">Pintasan Sistem</h3>
+          <div class="d-grid gap-2">
+            <a href="/admin-system/umkm/create" class="btn btn-outline-primary text-start p-3 rounded-3 d-flex align-items-center justify-content-between">
+              <span class="fw-semibold"><i class="bi bi-plus-circle-fill me-2"></i>Tambah UMKM Baru</span>
+              <i class="bi bi-arrow-right"></i>
+            </a>
+            <a href="/admin-system/umkm" class="btn btn-outline-secondary text-start p-3 rounded-3 d-flex align-items-center justify-content-between">
+              <span class="fw-semibold"><i class="bi bi-list-task me-2"></i>Daftar Lengkap UMKM</span>
+              <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+        <div class="mt-4 pt-3 border-top text-center text-secondary" style="font-size: 12px;">
+          <i class="bi bi-shield-check text-success"></i> Sistem Terenkripsi & Teramankan (SSL & Bcrypt)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UMKMs overview list -->
+  <div class="glass-card p-4 fade-in">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3 class="h6 fw-bold text-secondary mb-0">Daftar Aktif UMKM</h3>
+      <a href="/admin-system/umkm" class="btn btn-sm btn-link text-decoration-none">Lihat Semua</a>
+    </div>
+    <div class="table-responsive">
+      <table class="table custom-table mb-0">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Nama UMKM</th>
+            <th>Alamat</th>
+            <th>Telepon</th>
+            <th>Admin UMKM</th>
+            <th>Status Akun</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (umkms.length === 0) { %>
+            <tr>
+              <td colspan="6" class="text-center text-muted">Belum ada UMKM terdaftar</td>
+            </tr>
+          <% } else { %>
+            <% umkms.slice(0, 5).forEach((umkm, idx) => { %>
+              <% const admin = umkm.users?.[0]; %>
+              <tr>
+                <td><%= idx + 1 %></td>
+                <td class="fw-semibold"><%= umkm.nama_umkm %></td>
+                <td><%= umkm.alamat || '-' %></td>
+                <td><%= umkm.telepon || '-' %></td>
+                <td><%= admin ? admin.name : '-' %> (<%= admin ? admin.username : '-' %>)</td>
+                <td>
+                  <% if (admin) { %>
+                    <span class="badge bg-<%= admin.status ? 'success' : 'danger' %>-subtle text-<%= admin.status ? 'success' : 'danger' %>">
+                      <%= admin.status ? 'Aktif' : 'Nonaktif' %>
+                    </span>
+                  <% } else { %>
+                    <span class="text-muted">-</span>
+                  <% } %>
+                </td>
+              </tr>
+            <% }) %>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Chart Script -->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const ctx = document.getElementById('systemChart').getContext('2d');
+    
+    // Data serialized from EJS controller stats
+    const chartSales = <%- JSON.stringify(stats.chart_sales) %>;
+    const chartPurchases = <%- JSON.stringify(stats.chart_purchases) %>;
+    
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
+        datasets: [
+          {
+            label: 'Pendapatan Penjualan (IDR)',
+            data: chartSales,
+            backgroundColor: 'rgba(59, 130, 246, 0.85)',
+            borderColor: 'rgb(59, 130, 246)',
+            borderWidth: 1,
+            borderRadius: 6
+          },
+          {
+            label: 'Pengeluaran Pembelian (IDR)',
+            data: chartPurchases,
+            backgroundColor: 'rgba(239, 68, 68, 0.85)',
+            borderColor: 'rgb(239, 68, 68)',
+            borderWidth: 1,
+            borderRadius: 6
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(value) {
+                return 'Rp ' + Number(value).toLocaleString('id-ID');
+              }
+            }
+          }
+        },
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                let label = context.dataset.label || '';
+                if (label) {
+                  label += ': ';
+                }
+                if (context.parsed.y !== null) {
+                  label += 'Rp ' + Number(context.parsed.y).toLocaleString('id-ID');
+                }
+                return label;
+              }
+            }
+          }
+        }
+      }
+    });
+  });
+</script>
+
+<%- include('../partials/footer') %>

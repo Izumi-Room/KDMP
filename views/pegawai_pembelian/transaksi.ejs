@@ -1,0 +1,269 @@
+<%- include('../partials/header') %>
+<%- include('../partials/sidebar') %>
+
+<div class="main-wrapper">
+  <div class="page-header-nav mb-3">
+    <div>
+      <h1 class="h3 fw-bold mb-0">Terminal Restok & Pembelian</h1>
+      <p class="text-secondary mb-0" style="font-size: 13px;">Pencatatan pengadaan pasokan barang masuk dari mitra supplier</p>
+    </div>
+    <div>
+      <a href="/pembelian/dashboard" class="btn btn-outline-secondary" style="border-radius: 8px;">
+        <i class="bi bi-speedometer2 me-1"></i> Dashboard
+      </a>
+    </div>
+  </div>
+
+  <div class="pos-container fade-in">
+    <!-- Left Pane: Supplier Selection & Product Grid -->
+    <div class="pos-catalog">
+      <!-- Supplier Selector Card -->
+      <div class="glass-card p-3 mb-3">
+        <label class="form-label fw-bold text-secondary mb-2"><i class="bi bi-truck me-2"></i>Pilih Mitra Supplier</label>
+        <select id="supplierSelect" class="form-select form-control-custom" required>
+          <option value="" disabled selected>-- Pilih Vendor Supplier --</option>
+          <% suppliers.forEach(sup => { %>
+            <option value="<%= sup.id %>"><%= sup.nama_supplier %> (<%= sup.kode_supplier %>)</option>
+          <% }) %>
+        </select>
+      </div>
+
+      <!-- Item Search -->
+      <div class="glass-card p-3 mb-3">
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-secondary"></i></span>
+          <input type="text" id="catalogSearch" class="form-control form-control-custom border-start-0 ps-0" placeholder="Cari nama barang atau kode...">
+        </div>
+      </div>
+
+      <!-- Item Grid -->
+      <div class="row g-3" id="catalogGrid">
+        <% if (barang.length === 0) { %>
+          <div class="col-12 text-center text-muted py-5">
+            Katalog barang kosong.
+          </div>
+        <% } else { %>
+          <% barang.forEach(item => { %>
+            <div class="col-sm-6 col-md-4 product-card-wrapper" data-name="<%= item.nama_barang.toLowerCase() %>" data-code="<%= item.kode_barang.toLowerCase() %>">
+              <div class="glass-card p-3 h-100 d-flex flex-column justify-content-between">
+                <div>
+                  <span class="text-secondary" style="font-size: 11px;"><%= item.kode_barang %></span>
+                  <h4 class="h6 fw-bold text-dark mt-1 mb-1 product-title"><%= item.nama_barang %></h4>
+                  <div class="text-secondary" style="font-size: 12px;">Stok saat ini: <%= item.stok %> <%= item.satuan %></div>
+                </div>
+                <div class="mt-3">
+                  <!-- Restock Cost Price Input -->
+                  <div class="input-group input-group-sm mb-2">
+                    <span class="input-group-text bg-light" style="font-size: 11px;">Rp</span>
+                    <input type="number" id="cost-input-<%= item.id %>" class="form-control text-end" placeholder="Harga Beli" min="0" style="font-size: 11px;">
+                  </div>
+
+                  <button type="button" class="btn btn-danger btn-sm w-100 d-flex align-items-center justify-content-center gap-1 add-to-cart-btn" 
+                    onclick="addToRestock(<%= item.id %>, '<%= item.nama_barang %>', '<%= item.satuan %>');">
+                    <i class="bi bi-plus-lg"></i>
+                    <span>Tambahkan</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          <% }) %>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Right Pane: Restock Cart -->
+    <div class="pos-cart">
+      <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+        <h3 class="h6 fw-bold text-secondary mb-0"><i class="bi bi-bag-plus me-2"></i>Daftar Barang Masuk</h3>
+        <button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="clearRestock();">Kosongkan</button>
+      </div>
+
+      <!-- Restock Cart items -->
+      <div class="pos-cart-items" id="cartContainer">
+        <div class="text-center text-muted py-5" id="emptyCartMessage">
+          <i class="bi bi-box-seam fs-2 d-block mb-2 text-white-50"></i>
+          Daftar restok kosong
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="pos-cart-summary">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span class="fw-semibold text-secondary">Total Anggaran Pembelian:</span>
+          <span class="fs-4 fw-bold text-danger" id="cartTotalLabel">Rp 0</span>
+        </div>
+
+        <button type="button" class="btn btn-danger w-100 py-3 fw-bold" id="restockBtn" onclick="submitRestock();">
+          <i class="bi bi-save-fill me-1"></i> Simpan Transaksi Pembelian
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Restock Interactive JS -->
+<script>
+  let restockList = [];
+
+  // Search filter
+  document.getElementById('catalogSearch').addEventListener('input', function(e) {
+    const q = e.target.value.toLowerCase();
+    const cards = document.querySelectorAll('.product-card-wrapper');
+    cards.forEach(card => {
+      const name = card.getAttribute('data-name');
+      const code = card.getAttribute('data-code');
+      if (name.includes(q) || code.includes(q)) {
+        card.style.display = 'block';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  });
+
+  // Cart operations
+  function addToRestock(id, name, satuan) {
+    const costInput = document.getElementById(`cost-input-${id}`);
+    const cost = parseFloat(costInput.value);
+
+    if (isNaN(cost) || cost <= 0) {
+      alert("Masukkan harga beli/kulakan barang terlebih dahulu!");
+      costInput.focus();
+      return;
+    }
+
+    const existingIdx = restockList.findIndex(item => item.barang_id === id && item.harga_satuan === cost);
+
+    if (existingIdx > -1) {
+      restockList[existingIdx].qty++;
+    } else {
+      restockList.push({
+        barang_id: id,
+        nama_barang: name,
+        satuan: satuan,
+        qty: 1,
+        harga_satuan: cost
+      });
+    }
+
+    renderRestock();
+  }
+
+  function updateQty(index, newQty) {
+    newQty = parseInt(newQty);
+    if (newQty <= 0) {
+      restockList.splice(index, 1);
+    } else {
+      restockList[index].qty = newQty;
+    }
+    renderRestock();
+  }
+
+  function removeFromRestock(index) {
+    restockList.splice(index, 1);
+    renderRestock();
+  }
+
+  function clearRestock() {
+    restockList = [];
+    renderRestock();
+  }
+
+  function renderRestock() {
+    const container = document.getElementById('cartContainer');
+    const emptyMsg = document.getElementById('emptyCartMessage');
+    
+    if (restockList.length === 0) {
+      container.innerHTML = '';
+      container.appendChild(emptyMsg);
+      document.getElementById('cartTotalLabel').innerText = 'Rp 0';
+      return;
+    }
+
+    if (emptyMsg.parentNode === container) {
+      container.innerHTML = '';
+    } else {
+      container.innerHTML = '';
+    }
+
+    let total = 0;
+    restockList.forEach((item, index) => {
+      const subtotal = item.qty * item.harga_satuan;
+      total += subtotal;
+
+      const row = document.createElement('div');
+      row.className = 'glass-card p-3 mb-2 d-flex justify-content-between align-items-center';
+      row.innerHTML = `
+        <div class="flex-grow-1" style="max-width: 60%;">
+          <div class="fw-bold text-dark text-truncate" style="font-size: 13px;">${item.nama_barang}</div>
+          <div class="text-secondary" style="font-size: 11px;">Rp ${item.harga_satuan.toLocaleString('id-ID')} / ${item.satuan}</div>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <input type="number" class="form-control text-center py-1 px-2" value="${item.qty}" min="1" style="width: 50px; font-size: 12px;" onchange="updateQty(${index}, this.value);">
+          <button type="button" class="btn btn-outline-danger btn-sm border-0" onclick="removeFromRestock(${index});"><i class="bi bi-trash"></i></button>
+        </div>
+      `;
+      container.appendChild(row);
+    });
+
+    document.getElementById('cartTotalLabel').innerText = 'Rp ' + total.toLocaleString('id-ID');
+  }
+
+  function getRestockTotal() {
+    return restockList.reduce((sum, item) => sum + (item.qty * item.harga_satuan), 0);
+  }
+
+  // Submit via fetch API
+  function submitRestock() {
+    const supplierId = document.getElementById('supplierSelect').value;
+    
+    if (!supplierId) {
+      alert("Mitra supplier wajib dipilih!");
+      document.getElementById('supplierSelect').focus();
+      return;
+    }
+
+    if (restockList.length === 0) {
+      alert("Daftar restok barang kosong!");
+      return;
+    }
+
+    const total = getRestockTotal();
+
+    const btn = document.getElementById('restockBtn');
+    btn.disabled = true;
+    btn.innerText = "Memproses...";
+
+    fetch('/pembelian/transaksi', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        supplier_id: supplierId,
+        items: restockList,
+        total_harga: total
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      btn.disabled = false;
+      btn.innerHTML = `<i class="bi bi-save-fill me-1"></i> Simpan Transaksi Pembelian`;
+
+      if (data.success) {
+        alert("Transaksi restok pembelian berhasil dicatat!");
+        window.location.href = '/pembelian/dashboard';
+      } else {
+        alert("Gagal memproses pembelian: " + data.message);
+      }
+    })
+    .catch(err => {
+      btn.disabled = false;
+      btn.innerHTML = `<i class="bi bi-save-fill me-1"></i> Simpan Transaksi Pembelian`;
+      console.error(err);
+      alert("Terjadi kesalahan sistem.");
+    });
+  }
+</script>
+
+<%- include('../partials/footer') %>

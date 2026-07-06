@@ -1,0 +1,51 @@
+<%- include('../partials/header') %>
+<%- include('../partials/sidebar') %>
+
+<div class="main-wrapper">
+  <div class="page-header-nav">
+    <h1 class="h3 fw-bold mb-0">Akun Saya</h1>
+  </div>
+
+  <div class="row fade-in">
+    <div class="col-md-6 col-lg-5">
+      <div class="glass-card p-4">
+        <h2 class="h5 fw-bold mb-3 d-flex align-items-center gap-2">
+          <i class="bi bi-person text-primary"></i>
+          <span>Ubah Profil Personal</span>
+        </h2>
+
+        <%- include('../partials/alerts') %>
+
+        <form action="/profile" method="POST">
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-secondary">Username (ID Login)</label>
+            <input type="text" class="form-control form-control-custom bg-light" value="<%= profileUser.username %>" readonly>
+            <div class="form-text text-muted" style="font-size: 11px;">Username login tidak dapat diubah demi keamanan audit sistem.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-secondary">Nama Lengkap</label>
+            <input type="text" name="name" class="form-control form-control-custom <%= errors.name ? 'is-invalid' : '' %>" value="<%= old.name || profileUser.name %>" required>
+            <% if (errors.name) { %>
+              <div class="invalid-feedback"><%= errors.name %></div>
+            <% } %>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-semibold text-secondary">Email Address</label>
+            <input type="email" name="email" class="form-control form-control-custom <%= errors.email ? 'is-invalid' : '' %>" value="<%= old.email || profileUser.email || '' %>">
+            <% if (errors.email) { %>
+              <div class="invalid-feedback"><%= errors.email %></div>
+            <% } %>
+          </div>
+
+          <button type="submit" class="btn btn-primary-custom w-100">
+            Simpan Perubahan
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

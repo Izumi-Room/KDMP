@@ -1,0 +1,118 @@
+<%- include('../../partials/header') %>
+<%- include('../../partials/sidebar') %>
+
+<div class="main-wrapper">
+  <div class="page-header-nav">
+    <div>
+      <h1 class="h3 fw-bold mb-0">Kelola Pegawai</h1>
+      <p class="text-secondary mb-0" style="font-size: 14px;">Administrasi staff kasir penjualan dan staff logistik pembelian</p>
+    </div>
+    <div>
+      <a href="/admin-umkm/user/create" class="btn btn-primary-custom d-flex align-items-center gap-2">
+        <i class="bi bi-person-plus"></i>
+        <span>Tambah Pegawai</span>
+      </a>
+    </div>
+  </div>
+
+  <%- include('../../partials/alerts') %>
+
+  <!-- Search form -->
+  <div class="glass-card p-3 mb-4 fade-in">
+    <form action="/admin-umkm/user" method="GET" class="row g-3 align-items-center">
+      <div class="col-md-6 col-lg-4">
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-secondary"></i></span>
+          <input type="text" name="search" class="form-control form-control-custom border-start-0 ps-0" placeholder="Cari nama pegawai atau username..." value="<%= search %>">
+        </div>
+      </div>
+      <div class="col-auto">
+        <button type="submit" class="btn btn-primary-custom">Filter</button>
+        <% if (search) { %>
+          <a href="/admin-umkm/user" class="btn btn-outline-secondary ms-1" style="border-radius: 8px; padding: 10px 20px;">Reset</a>
+        <% } %>
+      </div>
+    </form>
+  </div>
+
+  <!-- Employee Table -->
+  <div class="glass-card fade-in">
+    <div class="table-responsive">
+      <table class="table custom-table mb-0">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Nama Pegawai</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Posisi (Role)</th>
+            <th>Status Akun</th>
+            <th class="text-end">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (users.length === 0) { %>
+            <tr>
+              <td colspan="7" class="text-center text-muted">Pegawai tidak ditemukan.</td>
+            </tr>
+          <% } else { %>
+            <% users.forEach((emp, index) => { %>
+              <% const num = (currentPage - 1) * 10 + index + 1; %>
+              <tr>
+                <td><%= num %></td>
+                <td class="fw-bold"><%= emp.name %></td>
+                <td><%= emp.username %></td>
+                <td><%= emp.email || '-' %></td>
+                <td>
+                  <span class="badge bg-primary-subtle text-primary">
+                    <%= emp.role?.name || '-' %>
+                  </span>
+                </td>
+                <td>
+                  <span class="badge bg-<%= emp.status ? 'success' : 'danger' %>-subtle text-<%= emp.status ? 'success' : 'danger' %>">
+                    <%= emp.status ? 'Aktif' : 'Nonaktif' %>
+                  </span>
+                </td>
+                <td class="text-end">
+                  <div class="d-flex justify-content-end gap-2">
+                    <a href="/admin-umkm/user/<%= emp.id %>/edit" class="btn btn-outline-warning btn-sm border-0" data-bs-toggle="tooltip" title="Edit Pegawai">
+                      <i class="bi bi-pencil-square"></i>
+                    </a>
+                    <form action="/admin-umkm/user/<%= emp.id %>/delete" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data pegawai ini?');" class="m-0">
+                      <button type="submit" class="btn btn-outline-danger btn-sm border-0" data-bs-toggle="tooltip" title="Hapus Pegawai">
+                        <i class="bi bi-trash-fill"></i>
+                      </button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            <% }) %>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination Footer -->
+    <% if (totalPages > 1) { %>
+      <div class="card-footer bg-white border-0 py-3 d-flex justify-content-center">
+        <nav aria-label="Page navigation">
+          <ul class="pagination pagination-sm mb-0">
+            <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+              <a class="page-link" href="/admin-umkm/user?page=<%= currentPage - 1 %>&search=<%= search %>">Sebelumnya</a>
+            </li>
+            <% for(let i = 1; i <= totalPages; i++) { %>
+              <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                <a class="page-link" href="/admin-umkm/user?page=<%= i %>&search=<%= search %>"><%= i %></a>
+              </li>
+            <% } %>
+            <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+              <a class="page-link" href="/admin-umkm/user?page=<%= currentPage + 1 %>&search=<%= search %>">Selanjutnya</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<%- include('../../partials/footer') %>

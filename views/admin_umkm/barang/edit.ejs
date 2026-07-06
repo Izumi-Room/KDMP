@@ -1,0 +1,77 @@
+<%- include('../../partials/header') %>
+<%- include('../../partials/sidebar') %>
+
+<div class="main-wrapper">
+  <div class="page-header-nav">
+    <div>
+      <h1 class="h3 fw-bold mb-0">Edit Barang</h1>
+      <p class="text-secondary mb-0" style="font-size: 14px;">Memperbarui informasi barang dan koreksi stock manual jika dibutuhkan</p>
+    </div>
+    <div>
+      <a href="/admin-umkm/barang" class="btn btn-outline-secondary d-flex align-items-center gap-2" style="border-radius: 8px; padding: 10px 20px;">
+        <i class="bi bi-arrow-left"></i>
+        <span>Kembali</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="row fade-in">
+    <div class="col-md-8 col-lg-6">
+      <div class="glass-card p-4">
+        <%- include('../../partials/alerts') %>
+
+        <form action="/admin-umkm/barang/<%= barang.id %>" method="POST">
+          <input type="hidden" name="_method" value="POST"> <!-- POST updates mapped via method-override -->
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-secondary">Kode Barang</label>
+            <input type="text" name="kode_barang" class="form-control form-control-custom <%= errors.kode_barang ? 'is-invalid' : '' %>" value="<%= old.kode_barang || barang.kode_barang %>" required>
+            <% if (errors.kode_barang) { %>
+              <div class="invalid-feedback"><%= errors.kode_barang %></div>
+            <% } %>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-secondary">Nama Barang</label>
+            <input type="text" name="nama_barang" class="form-control form-control-custom <%= errors.nama_barang ? 'is-invalid' : '' %>" value="<%= old.nama_barang || barang.nama_barang %>" required>
+            <% if (errors.nama_barang) { %>
+              <div class="invalid-feedback"><%= errors.nama_barang %></div>
+            <% } %>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-secondary">Ukuran / Dimensi</label>
+            <input type="text" name="ukuran" class="form-control form-control-custom <%= errors.ukuran ? 'is-invalid' : '' %>" value="<%= old.ukuran || barang.ukuran || '' %>">
+            <% if (errors.ukuran) { %>
+              <div class="invalid-feedback"><%= errors.ukuran %></div>
+            <% } %>
+          </div>
+
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold text-secondary">Stok Saat Ini (Koreksi Stok)</label>
+              <input type="number" name="stok" class="form-control form-control-custom <%= errors.stok ? 'is-invalid' : '' %>" value="<%= old.stok || barang.stok %>" required min="0">
+              <div class="form-text text-danger" style="font-size: 10px;"><i class="bi bi-info-circle me-1"></i>Koreksi manual akan otomatis mencatat log penyesuaian.</div>
+              <% if (errors.stok) { %>
+                <div class="invalid-feedback"><%= errors.stok %></div>
+              <% } %>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold text-secondary">Satuan Ukur</label>
+              <input type="text" name="satuan" class="form-control form-control-custom <%= errors.satuan ? 'is-invalid' : '' %>" value="<%= old.satuan || barang.satuan %>" required>
+              <% if (errors.satuan) { %>
+                <div class="invalid-feedback"><%= errors.satuan %></div>
+              <% } %>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary-custom w-100 py-3 fw-semibold">
+            <i class="bi bi-save me-1"></i> Simpan Perubahan
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../../partials/footer') %>

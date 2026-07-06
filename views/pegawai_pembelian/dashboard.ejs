@@ -1,0 +1,114 @@
+<%- include('../partials/header') %>
+<%- include('../partials/sidebar') %>
+
+<div class="main-wrapper">
+  <div class="page-header-nav">
+    <div>
+      <h1 class="h3 fw-bold mb-0">Dashboard Restok</h1>
+      <p class="text-secondary mb-0" style="font-size: 14px;">Selamat bekerja! Pantau transaksi restok pengadaan barang Anda</p>
+    </div>
+    <div>
+      <a href="/pembelian/transaksi" class="btn btn-primary-custom d-flex align-items-center gap-2">
+        <i class="bi bi-plus-circle-fill"></i>
+        <span>Restok Barang Baru</span>
+      </a>
+    </div>
+  </div>
+
+  <%- include('../partials/alerts') %>
+
+  <!-- Stats Grid -->
+  <div class="row g-4 mb-4 fade-in">
+    <div class="col-md-6 col-lg-4">
+      <div class="glass-card p-3 d-flex align-items-center gap-3">
+        <div class="stat-card-icon icon-blue">
+          <i class="bi bi-box-arrow-in-down"></i>
+        </div>
+        <div>
+          <h5 class="text-secondary mb-0" style="font-size: 13px;">Jumlah Restok Anda</h5>
+          <div class="fs-4 fw-bold text-dark"><%= totalCount %> Transaksi</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-4">
+      <div class="glass-card p-3 d-flex align-items-center gap-3">
+        <div class="stat-card-icon icon-red">
+          <i class="bi bi-cash-stack"></i>
+        </div>
+        <div>
+          <h5 class="text-secondary mb-0" style="font-size: 13px;">Total Anggaran Pengadaan</h5>
+          <div class="fs-4 fw-bold text-dark">
+            Rp <%= Number(totalSum).toLocaleString('id-ID') %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stock warning banner -->
+    <div class="col-md-12 col-lg-4">
+      <% if (lowStock.length > 0) { %>
+        <div class="alert alert-danger border-0 shadow-sm rounded-3 d-flex align-items-center mb-0 h-100" role="alert">
+          <i class="bi bi-exclamation-triangle-fill fs-3 me-3 text-danger"></i>
+          <div>
+            <div class="fw-bold">Stok Kritis Tersisa!</div>
+            <div style="font-size: 12px;"><%= lowStock.length %> produk butuh pasokan segera. Silakan buka menu Restok Barang.</div>
+          </div>
+        </div>
+      <% } else { %>
+        <div class="alert alert-success border-0 shadow-sm rounded-3 d-flex align-items-center mb-0 h-100" role="alert">
+          <i class="bi bi-check-circle-fill fs-3 me-3 text-success"></i>
+          <div>
+            <div class="fw-bold">Stok Aman</div>
+            <div style="font-size: 12px;">Seluruh stok barang dalam kondisi aman.</div>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- Recent Purchases Table -->
+  <div class="glass-card p-4 fade-in">
+    <h3 class="h6 fw-bold text-secondary mb-3">5 Transaksi Pembelian/Restok Terakhir Anda</h3>
+    <div class="table-responsive">
+      <table class="table custom-table mb-0">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>No Faktur</th>
+            <th>Tanggal</th>
+            <th>Mitra Supplier</th>
+            <th>Barang Restok (Qty)</th>
+            <th class="text-end">Total Pengeluaran</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (recentPurchases.length === 0) { %>
+            <tr>
+              <td colspan="6" class="text-center text-muted">Anda belum mencatat pembelian restok barang.</td>
+            </tr>
+          <% } else { %>
+            <% recentPurchases.forEach((p, idx) => { %>
+              <tr>
+                <td><%= idx + 1 %></td>
+                <td class="fw-semibold text-primary"><%= p.no_faktur %></td>
+                <td><%= p.tanggal %></td>
+                <td class="fw-bold"><%= p.supplier?.nama_supplier || '-' %></td>
+                <td>
+                  <ul class="list-unstyled mb-0" style="font-size: 12px;">
+                    <% p.details.forEach(det => { %>
+                      <li><%= det.barang?.nama_barang || 'Barang Dihapus' %> (<%= det.qty %> <%= det.barang?.satuan || 'pcs' %>)</li>
+                    <% }) %>
+                  </ul>
+                </td>
+                <td class="text-end fw-bold text-danger">Rp <%= Number(p.total_harga).toLocaleString('id-ID') %></td>
+              </tr>
+            <% }) %>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

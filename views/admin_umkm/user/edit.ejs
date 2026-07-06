@@ -1,0 +1,90 @@
+<%- include('../../partials/header') %>
+<%- include('../../partials/sidebar') %>
+
+<div class="main-wrapper">
+  <div class="page-header-nav">
+    <div>
+      <h1 class="h3 fw-bold mb-0">Edit Pegawai</h1>
+      <p class="text-secondary mb-0" style="font-size: 14px;">Memperbarui data dan kredensial staff pegawai warung</p>
+    </div>
+    <div>
+      <a href="/admin-umkm/user" class="btn btn-outline-secondary d-flex align-items-center gap-2" style="border-radius: 8px; padding: 10px 20px;">
+        <i class="bi bi-arrow-left"></i>
+        <span>Kembali</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="row fade-in">
+    <div class="col-md-8 col-lg-6">
+      <div class="glass-card p-4">
+        <%- include('../../partials/alerts') %>
+
+        <form action="/admin-umkm/user/<%= employee.id %>" method="POST">
+          <input type="hidden" name="_method" value="POST"> <!-- POST updates mapped via method-override -->
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-secondary">Username (ID Login)</label>
+            <input type="text" name="username" class="form-control form-control-custom <%= errors.username ? 'is-invalid' : '' %>" value="<%= old.username || employee.username %>" required>
+            <% if (errors.username) { %>
+              <div class="invalid-feedback"><%= errors.username %></div>
+            <% } %>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-secondary">Nama Lengkap</label>
+            <input type="text" name="name" class="form-control form-control-custom <%= errors.name ? 'is-invalid' : '' %>" value="<%= old.name || employee.name %>" required>
+            <% if (errors.name) { %>
+              <div class="invalid-feedback"><%= errors.name %></div>
+            <% } %>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-secondary">Email Address</label>
+            <input type="email" name="email" class="form-control form-control-custom <%= errors.email ? 'is-invalid' : '' %>" value="<%= old.email || employee.email || '' %>">
+            <% if (errors.email) { %>
+              <div class="invalid-feedback"><%= errors.email %></div>
+            <% } %>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-secondary">Posisi Pekerjaan (Role)</label>
+            <select name="role_id" class="form-select form-control-custom <%= errors.role_id ? 'is-invalid' : '' %>" required>
+              <% roles.forEach(role => { %>
+                <option value="<%= role.id %>" <%= (old.role_id || employee.role_id) == role.id ? 'selected' : '' %>><%= role.name %></option>
+              <% }) %>
+            </select>
+            <% if (errors.role_id) { %>
+              <div class="invalid-feedback"><%= errors.role_id %></div>
+            <% } %>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-secondary">Status Keaktifan Akun</label>
+            <select name="status" class="form-select form-control-custom <%= errors.status ? 'is-invalid' : '' %>" required>
+              <option value="true" <%= (old.status === 'true' || old.status === true || employee.status === true) ? 'selected' : '' %>>Aktif</option>
+              <option value="false" <%= (old.status === 'false' || old.status === false || employee.status === false) ? 'selected' : '' %>>Nonaktif</option>
+            </select>
+            <% if (errors.status) { %>
+              <div class="invalid-feedback"><%= errors.status %></div>
+            <% } %>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-semibold text-secondary">Password Baru (Opsional)</label>
+            <input type="password" name="password" class="form-control form-control-custom <%= errors.password ? 'is-invalid' : '' %>" placeholder="Kosongkan jika tidak ingin diubah">
+            <% if (errors.password) { %>
+              <div class="invalid-feedback"><%= errors.password %></div>
+            <% } %>
+          </div>
+
+          <button type="submit" class="btn btn-primary-custom w-100 py-3 fw-semibold">
+            <i class="bi bi-save me-1"></i> Simpan Perubahan
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../../partials/footer') %>

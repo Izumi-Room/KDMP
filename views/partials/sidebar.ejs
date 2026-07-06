@@ -1,0 +1,128 @@
+<div class="sidebar-wrapper d-flex flex-column justify-content-between">
+  <div>
+    <!-- Logo Header -->
+    <div class="sidebar-logo">
+      <i class="bi bi-shop text-primary"></i>
+      <span>AIWarung</span>
+    </div>
+
+    <!-- Navigation Menu Options -->
+    <ul class="sidebar-menu">
+      <% if (user.role === 'admin_system') { %>
+        <li class="<%= title.includes('Dashboard') ? 'active' : '' %>">
+          <a href="/admin-system/dashboard">
+            <i class="bi bi-grid-fill"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="<%= title.includes('UMKM') ? 'active' : '' %>">
+          <a href="/admin-system/umkm">
+            <i class="bi bi-houses-fill"></i>
+            <span>Kelola UMKM</span>
+          </a>
+        </li>
+      <% } else if (user.role === 'admin_umkm') { %>
+        <li class="<%= title === 'Dashboard Admin UMKM' ? 'active' : '' %>">
+          <a href="/admin-umkm/dashboard">
+            <i class="bi bi-grid-fill"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="<%= title.includes('Pegawai') ? 'active' : '' %>">
+          <a href="/admin-umkm/user">
+            <i class="bi bi-people-fill"></i>
+            <span>Kelola Pegawai</span>
+          </a>
+        </li>
+        <li class="<%= title.includes('Barang') ? 'active' : '' %>">
+          <a href="/admin-umkm/barang">
+            <i class="bi bi-box-seam-fill"></i>
+            <span>Katalog Barang</span>
+          </a>
+        </li>
+        <li class="<%= title.includes('Supplier') ? 'active' : '' %>">
+          <a href="/admin-umkm/supplier">
+            <i class="bi bi-truck"></i>
+            <span>Mitra Supplier</span>
+          </a>
+        </li>
+        <li class="<%= title.includes('Laporan Penjualan') ? 'active' : '' %>">
+          <a href="/admin-umkm/laporan/penjualan">
+            <i class="bi bi-file-earmark-bar-graph"></i>
+            <span>Laporan Penjualan</span>
+          </a>
+        </li>
+        <li class="<%= title.includes('Laporan Pembelian') ? 'active' : '' %>">
+          <a href="/admin-umkm/laporan/pembelian">
+            <i class="bi bi-file-earmark-ruled"></i>
+            <span>Laporan Pembelian</span>
+          </a>
+        </li>
+        <li class="<%= title.includes('Profil UMKM') ? 'active' : '' %>">
+          <a href="/admin-umkm/profile">
+            <i class="bi bi-shop-window"></i>
+            <span>Profil UMKM</span>
+          </a>
+        </li>
+      <% } else if (user.role === 'pegawai_penjualan') { %>
+        <li class="<%= title === 'Dashboard Kasir Penjualan' ? 'active' : '' %>">
+          <a href="/kasir/dashboard">
+            <i class="bi bi-speedometer2"></i>
+            <span>Dashboard Kasir</span>
+          </a>
+        </li>
+        <li class="<%= title.includes('POS Terminal') ? 'active' : '' %>">
+          <a href="/kasir/transaksi">
+            <i class="bi bi-cart-fill"></i>
+            <span>POS Checkout</span>
+          </a>
+        </li>
+      <% } else if (user.role === 'pegawai_pembelian') { %>
+        <li class="<%= title === 'Dashboard Pegawai Pembelian' ? 'active' : '' %>">
+          <a href="/pembelian/dashboard">
+            <i class="bi bi-speedometer2"></i>
+            <span>Dashboard Restok</span>
+          </a>
+        </li>
+        <li class="<%= title.includes('Terminal Pembelian') ? 'active' : '' %>">
+          <a href="/pembelian/transaksi">
+            <i class="bi bi-bag-plus-fill"></i>
+            <span>Restok Barang</span>
+          </a>
+        </li>
+      <% } %>
+
+      <li class="border-top border-secondary my-2 opacity-25"></li>
+
+      <!-- Common User Options -->
+      <li class="<%= title === 'Profil Saya' ? 'active' : '' %>">
+        <a href="/profile">
+          <i class="bi bi-person-circle"></i>
+          <span>Profil Saya</span>
+        </a>
+      </li>
+      <li class="<%= title === 'Ubah Password' ? 'active' : '' %>">
+        <a href="/change-password">
+          <i class="bi bi-shield-lock-fill"></i>
+          <span>Ubah Password</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- User Profile Section -->
+  <div class="user-profile-widget">
+    <div class="d-flex flex-column gap-2">
+      <div>
+        <div class="fw-semibold text-truncate" style="font-size: 14px;"><%= user.name %></div>
+        <div class="mt-1"><span class="role-badge"><%= user.roleName %></span></div>
+      </div>
+      <form action="/logout" method="POST" class="mt-2">
+        <button type="submit" class="btn btn-outline-danger btn-sm w-100 border-0 text-start d-flex align-items-center gap-2 p-2 rounded-2" style="background: rgba(239, 68, 68, 0.08);">
+          <i class="bi bi-box-arrow-right"></i>
+          <span>Keluar Aplikasi</span>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

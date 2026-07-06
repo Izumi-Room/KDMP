@@ -1,0 +1,138 @@
+<%- include('../../partials/header') %>
+<%- include('../../partials/sidebar') %>
+
+<div class="main-wrapper">
+  <div class="page-header-nav">
+    <div>
+      <h1 class="h3 fw-bold mb-0">Katalog Barang</h1>
+      <p class="text-secondary mb-0" style="font-size: 14px;">Administrasi stock barang dan log penyesuaian stock</p>
+    </div>
+    <div>
+      <a href="/admin-umkm/barang/create" class="btn btn-primary-custom d-flex align-items-center gap-2">
+        <i class="bi bi-plus-circle"></i>
+        <span>Tambah Barang</span>
+      </a>
+    </div>
+  </div>
+
+  <%- include('../../partials/alerts') %>
+
+  <!-- Search & Sorting Filters -->
+  <div class="glass-card p-3 mb-4 fade-in">
+    <form action="/admin-umkm/barang" method="GET" class="row g-3 align-items-center">
+      <div class="col-md-5 col-lg-4">
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-secondary"></i></span>
+          <input type="text" name="search" class="form-control form-control-custom border-start-0 ps-0" placeholder="Cari barang atau kode..." value="<%= search %>">
+        </div>
+      </div>
+      
+      <!-- Sorting fields -->
+      <div class="col-md-3 col-lg-2">
+        <select name="sort_by" class="form-select form-control-custom">
+          <option value="nama_barang" <%= sortBy === 'nama_barang' ? 'selected' : '' %>>Nama Barang</option>
+          <option value="kode_barang" <%= sortBy === 'kode_barang' ? 'selected' : '' %>>Kode Barang</option>
+          <option value="stok" <%= sortBy === 'stok' ? 'selected' : '' %>>Stok</option>
+          <option value="satuan" <%= sortBy === 'satuan' ? 'selected' : '' %>>Satuan</option>
+        </select>
+      </div>
+
+      <div class="col-md-3 col-lg-2">
+        <select name="sort_dir" class="form-select form-control-custom">
+          <option value="asc" <%= sortDir === 'asc' ? 'selected' : '' %>>Ascending</option>
+          <option value="desc" <%= sortDir === 'desc' ? 'selected' : '' %>>Descending</option>
+        </select>
+      </div>
+
+      <div class="col-auto">
+        <button type="submit" class="btn btn-primary-custom">Filter</button>
+        <% if (search || sortBy !== 'nama_barang' || sortDir !== 'asc') { %>
+          <a href="/admin-umkm/barang" class="btn btn-outline-secondary ms-1" style="border-radius: 8px; padding: 10px 20px;">Reset</a>
+        <% } %>
+      </div>
+    </form>
+  </div>
+
+  <!-- Goods Table -->
+  <div class="glass-card fade-in">
+    <div class="table-responsive">
+      <table class="table custom-table mb-0">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Kode Barang</th>
+            <th>Nama Barang</th>
+            <th>Ukuran</th>
+            <th>Stok Tersedia</th>
+            <th>Satuan</th>
+            <th class="text-end">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (barang.length === 0) { %>
+            <tr>
+              <td colspan="7" class="text-center text-muted">Katalog barang masih kosong.</td>
+            </tr>
+          <% } else { %>
+            <% barang.forEach((item, index) => { %>
+              <% const num = (currentPage - 1) * 10 + index + 1; %>
+              <tr>
+                <td><%= num %></td>
+                <td class="fw-semibold text-primary"><%= item.kode_barang %></td>
+                <td class="fw-bold text-dark"><%= item.nama_barang %></td>
+                <td><%= item.ukuran || '-' %></td>
+                <td>
+                  <% if (item.stok < 15) { %>
+                    <span class="badge bg-danger-subtle text-danger fw-bold rounded-pill px-3 py-2">
+                      <i class="bi bi-exclamation-triangle-fill me-1"></i><%= item.stok %> (Kritis)
+                    </span>
+                  <% } else { %>
+                    <span class="badge bg-success-subtle text-success fw-bold rounded-pill px-3 py-2">
+                      <%= item.stok %>
+                    </span>
+                  <% } %>
+                </td>
+                <td><%= item.satuan %></td>
+                <td class="text-end">
+                  <div class="d-flex justify-content-end gap-2">
+                    <a href="/admin-umkm/barang/<%= item.id %>/edit" class="btn btn-outline-warning btn-sm border-0" data-bs-toggle="tooltip" title="Edit Barang">
+                      <i class="bi bi-pencil-square"></i>
+                    </a>
+                    <form action="/admin-umkm/barang/<%= item.id %>/delete" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus barang ini? Data stok log dan transaksi terkait barang ini akan ikut terhapus!');" class="m-0">
+                      <button type="submit" class="btn btn-outline-danger btn-sm border-0" data-bs-toggle="tooltip" title="Hapus Barang">
+                        <i class="bi bi-trash-fill"></i>
+                      </button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            <% }) %>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination Footer -->
+    <% if (totalPages > 1) { %>
+      <div class="card-footer bg-white border-0 py-3 d-flex justify-content-center">
+        <nav aria-label="Page navigation">
+          <ul class="pagination pagination-sm mb-0">
+            <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+              <a class="page-link" href="/admin-umkm/barang?page=<%= currentPage - 1 %>&search=<%= search %>&sort_by=<%= sortBy %>&sort_dir=<%= sortDir %>">Sebelumnya</a>
+            </li>
+            <% for(let i = 1; i <= totalPages; i++) { %>
+              <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                <a class="page-link" href="/admin-umkm/barang?page=<%= i %>&search=<%= search %>&sort_by=<%= sortBy %>&sort_dir=<%= sortDir %>"><%= i %></a>
+              </li>
+            <% } %>
+            <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+              <a class="page-link" href="/admin-umkm/barang?page=<%= currentPage + 1 %>&search=<%= search %>&sort_by=<%= sortBy %>&sort_dir=<%= sortDir %>">Selanjutnya</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<%- include('../../partials/footer') %>

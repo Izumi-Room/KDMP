@@ -1,0 +1,213 @@
+<%- include('../partials/header') %>
+<%- include('../partials/sidebar') %>
+
+<div class="main-wrapper">
+  <div class="page-header-nav">
+    <div>
+      <h1 class="h3 fw-bold mb-0">Dashboard Admin UMKM</h1>
+      <p class="text-secondary mb-0" style="font-size: 14px;">Monitor perkembangan dan operasional warung Anda</p>
+    </div>
+  </div>
+
+  <%- include('../partials/alerts') %>
+
+  <!-- Stats Grid -->
+  <div class="row g-4 mb-4 fade-in">
+    <div class="col-6 col-lg-3">
+      <div class="glass-card p-3 d-flex align-items-center gap-3">
+        <div class="stat-card-icon icon-blue">
+          <i class="bi bi-box-seam-fill"></i>
+        </div>
+        <div>
+          <h5 class="text-secondary mb-0" style="font-size: 13px;">Katalog Barang</h5>
+          <div class="fs-4 fw-bold text-dark"><%= stats.total_barang %></div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-6 col-lg-3">
+      <div class="glass-card p-3 d-flex align-items-center gap-3">
+        <div class="stat-card-icon icon-green">
+          <i class="bi bi-truck"></i>
+        </div>
+        <div>
+          <h5 class="text-secondary mb-0" style="font-size: 13px;">Mitra Supplier</h5>
+          <div class="fs-4 fw-bold text-dark"><%= stats.total_supplier %></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 col-lg-3">
+      <div class="glass-card p-3 d-flex align-items-center gap-3">
+        <div class="stat-card-icon icon-orange">
+          <i class="bi bi-currency-dollar"></i>
+        </div>
+        <div>
+          <h5 class="text-secondary mb-0" style="font-size: 13px;">Omset Penjualan</h5>
+          <div class="fs-5 fw-bold text-dark text-truncate" style="max-width: 130px;">
+            Rp <%= Number(stats.total_sales).toLocaleString('id-ID') %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 col-lg-3">
+      <div class="glass-card p-3 d-flex align-items-center gap-3">
+        <div class="stat-card-icon icon-red">
+          <i class="bi bi-cart-dash-fill"></i>
+        </div>
+        <div>
+          <h5 class="text-secondary mb-0" style="font-size: 13px;">Biaya Pembelian</h5>
+          <div class="fs-5 fw-bold text-dark text-truncate" style="max-width: 130px;">
+            Rp <%= Number(stats.total_purchases).toLocaleString('id-ID') %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart Area -->
+  <div class="row g-4 mb-4 fade-in">
+    <div class="col-lg-8">
+      <div class="glass-card p-4 h-100">
+        <h3 class="h6 fw-bold text-secondary mb-3">Tren Penjualan vs Pembelian (Tahun Ini)</h3>
+        <div style="height: 300px; position: relative;">
+          <canvas id="umkmChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Low Stock warning widget -->
+    <div class="col-lg-4">
+      <div class="glass-card p-4 h-100 d-flex flex-column">
+        <h3 class="h6 fw-bold text-secondary mb-3">Pemberitahuan Stok Menipis (< 15)</h3>
+        <div class="flex-grow-1 overflow-y-auto" style="max-height: 260px;">
+          <% if (stats.low_stock.length === 0) { %>
+            <div class="text-center py-4 text-muted">
+              <i class="bi bi-shield-check text-success fs-3 d-block mb-2"></i>
+              Stok semua barang aman!
+            </div>
+          <% } else { %>
+            <div class="list-group list-group-flush">
+              <% stats.low_stock.forEach(item => { %>
+                <div class="list-group-item px-0 py-2 bg-transparent border-0 d-flex justify-content-between align-items-center">
+                  <div>
+                    <div class="fw-semibold text-dark text-truncate" style="max-width: 160px;"><%= item.nama_barang %></div>
+                    <small class="text-secondary"><%= item.kode_barang %> | Ukuran: <%= item.ukuran || '-' %></small>
+                  </div>
+                  <span class="badge bg-danger-subtle text-danger rounded-pill fw-bold"><%= item.stok %> <%= item.satuan %></span>
+                </div>
+              <% }) %>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Best Sellers -->
+  <div class="glass-card p-4 fade-in">
+    <h3 class="h6 fw-bold text-secondary mb-3">Peringkat 5 Produk Terlaris</h3>
+    <div class="table-responsive">
+      <table class="table custom-table mb-0">
+        <thead>
+          <tr>
+            <th>Peringkat</th>
+            <th>Kode Barang</th>
+            <th>Nama Barang</th>
+            <th>Ukuran</th>
+            <th>Satuan</th>
+            <th class="text-end">Total Terjual</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (stats.best_sellers.length === 0) { %>
+            <tr>
+              <td colspan="6" class="text-center text-muted">Belum ada transaksi penjualan yang tercatat.</td>
+            </tr>
+          <% } else { %>
+            <% stats.best_sellers.forEach((item, index) => { %>
+              <tr>
+                <td class="fw-bold text-primary">#<%= index + 1 %></td>
+                <td><%= item.barang?.kode_barang || '-' %></td>
+                <td class="fw-semibold"><%= item.barang?.nama_barang || '-' %></td>
+                <td><%= item.barang?.ukuran || '-' %></td>
+                <td><%= item.barang?.satuan || '-' %></td>
+                <td class="text-end fw-bold text-success"><%= item.total_sold %></td>
+              </tr>
+            <% }) %>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Chart JS Script -->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const ctx = document.getElementById('umkmChart').getContext('2d');
+    
+    const chartSales = <%- JSON.stringify(stats.chart_sales) %>;
+    const chartPurchases = <%- JSON.stringify(stats.chart_purchases) %>;
+    
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
+        datasets: [
+          {
+            label: 'Penjualan (IDR)',
+            data: chartSales,
+            borderColor: 'rgb(16, 185, 129)',
+            backgroundColor: 'rgba(16, 185, 129, 0.08)',
+            borderWidth: 3,
+            tension: 0.3,
+            fill: true
+          },
+          {
+            label: 'Pembelian (IDR)',
+            data: chartPurchases,
+            borderColor: 'rgb(239, 68, 68)',
+            backgroundColor: 'rgba(239, 68, 68, 0.08)',
+            borderWidth: 3,
+            tension: 0.3,
+            fill: true
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(value) {
+                return 'Rp ' + Number(value).toLocaleString('id-ID');
+              }
+            }
+          }
+        },
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                let label = context.dataset.label || '';
+                if (label) {
+                  label += ': ';
+                }
+                if (context.parsed.y !== null) {
+                  label += 'Rp ' + Number(context.parsed.y).toLocaleString('id-ID');
+                }
+                return label;
+              }
+            }
+          }
+        }
+      }
+    });
+  });
+</script>
+
+<%- include('../partials/footer') %>

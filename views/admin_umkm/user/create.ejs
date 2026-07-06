@@ -1,0 +1,78 @@
+<%- include('../../partials/header') %>
+<%- include('../../partials/sidebar') %>
+
+<div class="main-wrapper">
+  <div class="page-header-nav">
+    <div>
+      <h1 class="h3 fw-bold mb-0">Tambah Pegawai Baru</h1>
+      <p class="text-secondary mb-0" style="font-size: 14px;">Menambahkan staff penjualan (kasir) atau pembelian (restok)</p>
+    </div>
+    <div>
+      <a href="/admin-umkm/user" class="btn btn-outline-secondary d-flex align-items-center gap-2" style="border-radius: 8px; padding: 10px 20px;">
+        <i class="bi bi-arrow-left"></i>
+        <span>Kembali</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="row fade-in">
+    <div class="col-md-8 col-lg-6">
+      <div class="glass-card p-4">
+        <%- include('../../partials/alerts') %>
+
+        <form action="/admin-umkm/user" method="POST">
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-secondary">Username (ID Login)</label>
+            <input type="text" name="username" class="form-control form-control-custom <%= errors.username ? 'is-invalid' : '' %>" value="<%= old.username || '' %>" required placeholder="Contoh: kasir_budi">
+            <% if (errors.username) { %>
+              <div class="invalid-feedback"><%= errors.username %></div>
+            <% } %>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-secondary">Nama Lengkap</label>
+            <input type="text" name="name" class="form-control form-control-custom <%= errors.name ? 'is-invalid' : '' %>" value="<%= old.name || '' %>" required placeholder="Contoh: Budi Santoso">
+            <% if (errors.name) { %>
+              <div class="invalid-feedback"><%= errors.name %></div>
+            <% } %>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-secondary">Email Address</label>
+            <input type="email" name="email" class="form-control form-control-custom <%= errors.email ? 'is-invalid' : '' %>" value="<%= old.email || '' %>" placeholder="Contoh: budi@warung.com">
+            <% if (errors.email) { %>
+              <div class="invalid-feedback"><%= errors.email %></div>
+            <% } %>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-secondary">Posisi Pekerjaan (Role)</label>
+            <select name="role_id" class="form-select form-control-custom <%= errors.role_id ? 'is-invalid' : '' %>" required>
+              <option value="" disabled selected>-- Pilih Posisi --</option>
+              <% roles.forEach(role => { %>
+                <option value="<%= role.id %>" <%= old.role_id == role.id ? 'selected' : '' %>><%= role.name %></option>
+              <% }) %>
+            </select>
+            <% if (errors.role_id) { %>
+              <div class="invalid-feedback"><%= errors.role_id %></div>
+            <% } %>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-semibold text-secondary">Password Akses</label>
+            <input type="password" name="password" class="form-control form-control-custom <%= errors.password ? 'is-invalid' : '' %>" required placeholder="Minimal 6 karakter">
+            <% if (errors.password) { %>
+              <div class="invalid-feedback"><%= errors.password %></div>
+            <% } %>
+          </div>
+
+          <button type="submit" class="btn btn-primary-custom w-100 py-3 fw-semibold">
+            <i class="bi bi-save me-1"></i> Simpan Pegawai
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../../partials/footer') %>

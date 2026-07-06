@@ -1,0 +1,53 @@
+<%- include('../partials/header') %>
+<%- include('../partials/sidebar') %>
+
+<div class="main-wrapper">
+  <div class="page-header-nav">
+    <h1 class="h3 fw-bold mb-0">Profil UMKM</h1>
+  </div>
+
+  <div class="row fade-in">
+    <div class="col-md-6 col-lg-5">
+      <div class="glass-card p-4">
+        <h2 class="h5 fw-bold mb-3 d-flex align-items-center gap-2">
+          <i class="bi bi-shop text-primary"></i>
+          <span>Ubah Profil Warung</span>
+        </h2>
+
+        <%- include('../partials/alerts') %>
+
+        <form action="/admin-umkm/profile" method="POST">
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-secondary">Nama UMKM / Warung</label>
+            <input type="text" name="nama_umkm" class="form-control form-control-custom <%= errors.nama_umkm ? 'is-invalid' : '' %>" value="<%= old.nama_umkm || umkm.nama_umkm %>" required>
+            <% if (errors.nama_umkm) { %>
+              <div class="invalid-feedback"><%= errors.nama_umkm %></div>
+            <% } %>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-secondary">Nomor Telepon Kontak</label>
+            <input type="text" name="telepon" class="form-control form-control-custom <%= errors.telepon ? 'is-invalid' : '' %>" value="<%= old.telepon || umkm.telepon || '' %>">
+            <% if (errors.telepon) { %>
+              <div class="invalid-feedback"><%= errors.telepon %></div>
+            <% } %>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-semibold text-secondary">Alamat Fisik Lengkap</label>
+            <textarea name="alamat" class="form-control form-control-custom <%= errors.alamat ? 'is-invalid' : '' %>" rows="3" required><%= old.alamat || umkm.alamat || '' %></textarea>
+            <% if (errors.alamat) { %>
+              <div class="invalid-feedback"><%= errors.alamat %></div>
+            <% } %>
+          </div>
+
+          <button type="submit" class="btn btn-primary-custom w-100">
+            Perbarui Profil UMKM
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

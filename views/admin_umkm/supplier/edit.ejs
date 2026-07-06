@@ -1,0 +1,67 @@
+<%- include('../../partials/header') %>
+<%- include('../../partials/sidebar') %>
+
+<div class="main-wrapper">
+  <div class="page-header-nav">
+    <div>
+      <h1 class="h3 fw-bold mb-0">Edit Supplier</h1>
+      <p class="text-secondary mb-0" style="font-size: 14px;">Memperbarui data detail kontak dan alamat mitra supplier</p>
+    </div>
+    <div>
+      <a href="/admin-umkm/supplier" class="btn btn-outline-secondary d-flex align-items-center gap-2" style="border-radius: 8px; padding: 10px 20px;">
+        <i class="bi bi-arrow-left"></i>
+        <span>Kembali</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="row fade-in">
+    <div class="col-md-8 col-lg-6">
+      <div class="glass-card p-4">
+        <%- include('../../partials/alerts') %>
+
+        <form action="/admin-umkm/supplier/<%= supplier.id %>" method="POST">
+          <input type="hidden" name="_method" value="POST"> <!-- POST updates mapped via method-override -->
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-secondary">Kode Supplier</label>
+            <input type="text" name="kode_supplier" class="form-control form-control-custom <%= errors.kode_supplier ? 'is-invalid' : '' %>" value="<%= old.kode_supplier || supplier.kode_supplier %>" required>
+            <% if (errors.kode_supplier) { %>
+              <div class="invalid-feedback"><%= errors.kode_supplier %></div>
+            <% } %>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-secondary">Nama Supplier / Vendor</label>
+            <input type="text" name="nama_supplier" class="form-control form-control-custom <%= errors.nama_supplier ? 'is-invalid' : '' %>" value="<%= old.nama_supplier || supplier.nama_supplier %>" required>
+            <% if (errors.nama_supplier) { %>
+              <div class="invalid-feedback"><%= errors.nama_supplier %></div>
+            <% } %>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold text-secondary">Nomor NPWP Vendor (Opsional)</label>
+            <input type="text" name="npwp" class="form-control form-control-custom <%= errors.npwp ? 'is-invalid' : '' %>" value="<%= old.npwp || supplier.npwp || '' %>">
+            <% if (errors.npwp) { %>
+              <div class="invalid-feedback"><%= errors.npwp %></div>
+            <% } %>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-semibold text-secondary">Alamat Kantor / Gudang</label>
+            <textarea name="alamat" class="form-control form-control-custom <%= errors.alamat ? 'is-invalid' : '' %>" rows="3"><%= old.alamat || supplier.alamat || '' %></textarea>
+            <% if (errors.alamat) { %>
+              <div class="invalid-feedback"><%= errors.alamat %></div>
+            <% } %>
+          </div>
+
+          <button type="submit" class="btn btn-primary-custom w-100 py-3 fw-semibold">
+            <i class="bi bi-save me-1"></i> Simpan Perubahan
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../../partials/footer') %>
