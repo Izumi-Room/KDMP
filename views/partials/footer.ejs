@@ -1,5 +1,8 @@
   </div>
 
+  <!-- Sidebar overlay for mobile tap-to-close -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
   <!-- Bootstrap 5 Bundle JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   
@@ -19,6 +22,41 @@
         bsAlert.close();
       });
     }, 4000);
+
+    // Sidebar Mobile Toggle + Overlay
+    document.addEventListener("DOMContentLoaded", function() {
+      const toggleBtn = document.getElementById('sidebarToggleMobile');
+      const sidebar = document.querySelector('.sidebar-wrapper');
+      const overlay = document.getElementById('sidebarOverlay');
+
+      function openSidebar() {
+        sidebar && sidebar.classList.add('show');
+        overlay && overlay.classList.add('show');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeSidebar() {
+        sidebar && sidebar.classList.remove('show');
+        overlay && overlay.classList.remove('show');
+        document.body.style.overflow = '';
+      }
+
+      if (toggleBtn) {
+        toggleBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          sidebar && sidebar.classList.contains('show') ? closeSidebar() : openSidebar();
+        });
+      }
+
+      if (overlay) {
+        overlay.addEventListener('click', closeSidebar);
+      }
+
+      // Close on resize back to desktop
+      window.addEventListener('resize', function() {
+        if (window.innerWidth >= 992) closeSidebar();
+      });
+    });
   </script>
 </body>
 </html>

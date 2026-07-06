@@ -27,11 +27,24 @@ export class LaporanController {
     return years;
   }
 
+  static parseFilters(req) {
+    let bulan = parseInt(req.query.bulan, 10);
+    let tahun = parseInt(req.query.tahun, 10);
+
+    if (isNaN(bulan) || bulan < 1 || bulan > 12) {
+      bulan = new Date().getMonth() + 1;
+    }
+    if (isNaN(tahun) || tahun < 2000 || tahun > 2100) {
+      tahun = new Date().getFullYear();
+    }
+
+    return { bulan, tahun };
+  }
+
   // 1. Sales Report
   static async penjualanIndex(req, res) {
     const umkmId = req.session.user.umkm_id;
-    const bulan = parseInt(req.query.bulan || new Date().getMonth() + 1, 10);
-    const tahun = parseInt(req.query.tahun || new Date().getFullYear(), 10);
+    const { bulan, tahun } = LaporanController.parseFilters(req);
 
     try {
       const report = await Penjualan.findAll({
@@ -65,8 +78,7 @@ export class LaporanController {
 
   static async penjualanExportPdf(req, res) {
     const umkmId = req.session.user.umkm_id;
-    const bulan = parseInt(req.query.bulan || new Date().getMonth() + 1, 10);
-    const tahun = parseInt(req.query.tahun || new Date().getFullYear(), 10);
+    const { bulan, tahun } = LaporanController.parseFilters(req);
     const namaBulan = indoMonths[bulan];
 
     try {
@@ -138,8 +150,7 @@ export class LaporanController {
 
   static async penjualanExportExcel(req, res) {
     const umkmId = req.session.user.umkm_id;
-    const bulan = parseInt(req.query.bulan || new Date().getMonth() + 1, 10);
-    const tahun = parseInt(req.query.tahun || new Date().getFullYear(), 10);
+    const { bulan, tahun } = LaporanController.parseFilters(req);
     const namaBulan = indoMonths[bulan];
 
     try {
@@ -246,8 +257,7 @@ export class LaporanController {
   // 2. Purchase Report
   static async pembelianIndex(req, res) {
     const umkmId = req.session.user.umkm_id;
-    const bulan = parseInt(req.query.bulan || new Date().getMonth() + 1, 10);
-    const tahun = parseInt(req.query.tahun || new Date().getFullYear(), 10);
+    const { bulan, tahun } = LaporanController.parseFilters(req);
 
     try {
       const report = await Pembelian.findAll({
@@ -282,8 +292,7 @@ export class LaporanController {
 
   static async pembelianExportPdf(req, res) {
     const umkmId = req.session.user.umkm_id;
-    const bulan = parseInt(req.query.bulan || new Date().getMonth() + 1, 10);
-    const tahun = parseInt(req.query.tahun || new Date().getFullYear(), 10);
+    const { bulan, tahun } = LaporanController.parseFilters(req);
     const namaBulan = indoMonths[bulan];
 
     try {
@@ -354,8 +363,7 @@ export class LaporanController {
 
   static async pembelianExportExcel(req, res) {
     const umkmId = req.session.user.umkm_id;
-    const bulan = parseInt(req.query.bulan || new Date().getMonth() + 1, 10);
-    const tahun = parseInt(req.query.tahun || new Date().getFullYear(), 10);
+    const { bulan, tahun } = LaporanController.parseFilters(req);
     const namaBulan = indoMonths[bulan];
 
     try {

@@ -78,6 +78,7 @@
                 <td>
                   <% if (admin) { %>
                     <form action="/admin-system/user/<%= admin.id %>/toggle-status" method="POST" id="toggle-form-<%= admin.id %>" class="m-0">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                       <label class="switch">
                         <input type="checkbox" <%= admin.status ? 'checked' : '' %> onchange="document.getElementById('toggle-form-<%= admin.id %>').submit();">
                         <span class="slider"></span>
@@ -94,6 +95,7 @@
                     </a>
                     
                     <form action="/admin-system/umkm/<%= umkm.id %>/delete" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus UMKM ini? Seluruh data barang, transaksi, dan pegawai di bawah UMKM ini akan dihapus permanen!');" class="m-0">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                       <button type="submit" class="btn btn-outline-danger btn-sm border-0" data-bs-toggle="tooltip" title="Hapus UMKM">
                         <i class="bi bi-trash-fill"></i>
                       </button>

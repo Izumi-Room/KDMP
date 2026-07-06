@@ -191,3 +191,23 @@ export const supplierUpdateValidator = [
   body('npwp').trim().optional({ nullable: true }),
   validateResult
 ];
+
+export const profileUpdateValidator = [
+  body('name').trim().notEmpty().withMessage('Nama lengkap admin wajib diisi'),
+  body('email').trim().notEmpty().withMessage('Email wajib diisi')
+    .isEmail().withMessage('Format email tidak valid'),
+  validateResult
+];
+
+export const passwordChangeValidator = [
+  body('current_password').notEmpty().withMessage('Password saat ini wajib diisi'),
+  body('password').isLength({ min: 6 }).withMessage('Password baru minimal 6 karakter'),
+  body('password_confirmation').notEmpty().withMessage('Konfirmasi password baru wajib diisi')
+    .custom((value, { req }) => {
+      if (value !== req.body.password) {
+        throw new Error('Konfirmasi password baru tidak cocok');
+      }
+      return true;
+    }),
+  validateResult
+];

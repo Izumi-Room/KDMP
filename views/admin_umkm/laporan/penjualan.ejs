@@ -13,36 +13,40 @@
 
   <!-- Filters Area -->
   <div class="glass-card p-4 mb-4 fade-in">
-    <form action="/admin-umkm/laporan/penjualan" method="GET" class="row g-3 align-items-end">
-      <div class="col-md-3">
-        <label class="form-label fw-semibold text-secondary">Pilih Bulan</label>
-        <select name="bulan" class="form-select form-control-custom">
-          <% Object.keys(months).forEach(num => { %>
-            <option value="<%= num %>" <%= parseInt(num, 10) === bulan ? 'selected' : '' %>><%= months[num] %></option>
-          <% }) %>
-        </select>
+    <form action="/admin-umkm/laporan/penjualan" method="GET">
+      <div class="row g-3 align-items-end">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+          <label class="form-label fw-semibold text-secondary">Pilih Bulan</label>
+          <select name="bulan" class="form-select form-control-custom">
+            <% Object.keys(months).forEach(num => { %>
+              <option value="<%= num %>" <%= parseInt(num, 10) === bulan ? 'selected' : '' %>><%= months[num] %></option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+          <label class="form-label fw-semibold text-secondary">Pilih Tahun</label>
+          <select name="tahun" class="form-select form-control-custom">
+            <% years.forEach(yr => { %>
+              <option value="<%= yr %>" <%= yr === tahun ? 'selected' : '' %>><%= yr %></option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="col-12 col-sm-auto">
+          <button type="submit" class="btn btn-primary-custom w-100">
+            <i class="bi bi-funnel me-1"></i> Filter
+          </button>
+        </div>
       </div>
 
-      <div class="col-md-3">
-        <label class="form-label fw-semibold text-secondary">Pilih Tahun</label>
-        <select name="tahun" class="form-select form-control-custom">
-          <% years.forEach(yr => { %>
-            <option value="<%= yr %>" <%= yr === tahun ? 'selected' : '' %>><%= yr %></option>
-          <% }) %>
-        </select>
-      </div>
-
-      <div class="col-auto">
-        <button type="submit" class="btn btn-primary-custom" style="padding: 10px 24px;">Filter</button>
-      </div>
-
-      <!-- Export buttons -->
-      <div class="col-auto ms-auto d-flex gap-2">
-        <a href="/admin-umkm/laporan/penjualan/export-pdf?bulan=<%= bulan %>&tahun=<%= tahun %>" class="btn btn-danger d-flex align-items-center gap-2" style="border-radius: 8px; padding: 10px 20px;">
+      <!-- Export buttons row -->
+      <div class="d-flex flex-wrap gap-2 mt-3 pt-3 border-top">
+        <a href="/admin-umkm/laporan/penjualan/export-pdf?bulan=<%= bulan %>&tahun=<%= tahun %>" class="btn btn-danger d-flex align-items-center gap-2" style="border-radius: 8px;">
           <i class="bi bi-file-earmark-pdf-fill"></i>
           <span>Unduh PDF</span>
         </a>
-        <a href="/admin-umkm/laporan/penjualan/export-excel?bulan=<%= bulan %>&tahun=<%= tahun %>" class="btn btn-success d-flex align-items-center gap-2" style="border-radius: 8px; padding: 10px 20px;">
+        <a href="/admin-umkm/laporan/penjualan/export-excel?bulan=<%= bulan %>&tahun=<%= tahun %>" class="btn btn-success d-flex align-items-center gap-2" style="border-radius: 8px;">
           <i class="bi bi-file-earmark-excel-fill"></i>
           <span>Unduh Excel</span>
         </a>

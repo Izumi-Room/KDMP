@@ -79,6 +79,7 @@
                       <i class="bi bi-pencil-square"></i>
                     </a>
                     <form action="/admin-umkm/user/<%= emp.id %>/delete" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data pegawai ini?');" class="m-0">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                       <button type="submit" class="btn btn-outline-danger btn-sm border-0" data-bs-toggle="tooltip" title="Hapus Pegawai">
                         <i class="bi bi-trash-fill"></i>
                       </button>

@@ -16,11 +16,12 @@
   </div>
 
   <div class="row fade-in">
-    <div class="col-lg-8">
+    <div class="col-12 col-lg-10 col-xl-8">
       <div class="glass-card p-4">
         <%- include('../../partials/alerts') %>
 
         <form action="/admin-system/umkm/<%= umkm.id %>" method="POST">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <input type="hidden" name="_method" value="POST"> <!-- Since we map POST /umkm/:id as update -->
 
           <!-- UMKM Profile Section -->

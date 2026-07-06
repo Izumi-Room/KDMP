@@ -118,6 +118,7 @@
         <div class="mt-1"><span class="role-badge"><%= user.roleName %></span></div>
       </div>
       <form action="/logout" method="POST" class="mt-2">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <button type="submit" class="btn btn-outline-danger btn-sm w-100 border-0 text-start d-flex align-items-center gap-2 p-2 rounded-2" style="background: rgba(239, 68, 68, 0.08);">
           <i class="bi bi-box-arrow-right"></i>
           <span>Keluar Aplikasi</span>

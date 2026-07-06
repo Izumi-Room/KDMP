@@ -60,13 +60,8 @@ export class AuthController {
   }
 
   static async updatePassword(req, res) {
-    const { current_password, password, password_confirmation } = req.body;
+    const { current_password, password } = req.body;
     const userId = req.session.user.id;
-
-    if (password !== password_confirmation) {
-      req.session.errors = { password_confirmation: 'Konfirmasi password baru tidak cocok' };
-      return res.redirect('back');
-    }
 
     try {
       const user = await User.findByPk(userId);
