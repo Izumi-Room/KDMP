@@ -11,5 +11,7 @@ router.get('/dashboard', PegawaiPenjualanController.dashboard);
 router.get('/transaksi', PegawaiPenjualanController.transaksi);
 router.post('/transaksi', PegawaiPenjualanController.storeTransaksi);
 router.get('/transaksi/:id/print', PegawaiPenjualanController.printInvoice);
+router.get('/barang', PegawaiPenjualanController.barang);
+router.get('/penjualan', PegawaiPenjualanController.penjualan);
 
 export default router;

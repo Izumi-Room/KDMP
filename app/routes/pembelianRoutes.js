@@ -10,5 +10,8 @@ router.use(hasRole(['pegawai_pembelian']));
 router.get('/dashboard', PegawaiPembelianController.dashboard);
 router.get('/transaksi', PegawaiPembelianController.transaksi);
 router.post('/transaksi', PegawaiPembelianController.storeTransaksi);
+router.get('/supplier', PegawaiPembelianController.supplier);
+router.get('/barang', PegawaiPembelianController.barang);
+router.get('/pembelian', PegawaiPembelianController.pembelian);
 
 export default router;

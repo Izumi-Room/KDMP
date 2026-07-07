@@ -33,8 +33,8 @@ export const loginValidator = [
 
 export const umkmCreateValidator = [
   body('nama_umkm').trim().notEmpty().withMessage('Nama UMKM wajib diisi'),
-  body('alamat').trim().optional({ nullable: true }),
-  body('telepon').trim().optional({ nullable: true }),
+  body('alamat').trim().optional({ values: 'falsy' }),
+  body('telepon').trim().optional({ values: 'falsy' }),
   body('username').trim().notEmpty().withMessage('Username admin wajib diisi')
     .custom(async (value) => {
       const user = await User.findOne({ where: { username: value } });
@@ -42,15 +42,15 @@ export const umkmCreateValidator = [
       return true;
     }),
   body('name').trim().notEmpty().withMessage('Nama lengkap admin wajib diisi'),
-  body('email').trim().optional({ nullable: true }).isEmail().withMessage('Format email tidak valid'),
+  body('email').trim().optional({ values: 'falsy' }).isEmail().withMessage('Format email tidak valid'),
   body('password').isLength({ min: 6 }).withMessage('Password minimal 6 karakter'),
   validateResult
 ];
 
 export const umkmUpdateValidator = [
   body('nama_umkm').trim().notEmpty().withMessage('Nama UMKM wajib diisi'),
-  body('alamat').trim().optional({ nullable: true }),
-  body('telepon').trim().optional({ nullable: true }),
+  body('alamat').trim().optional({ values: 'falsy' }),
+  body('telepon').trim().optional({ values: 'falsy' }),
   body('username').trim().notEmpty().withMessage('Username admin wajib diisi')
     .custom(async (value, { req }) => {
       const umkmId = req.params.id;
@@ -70,8 +70,8 @@ export const umkmUpdateValidator = [
       return true;
     }),
   body('name').trim().notEmpty().withMessage('Nama lengkap admin wajib diisi'),
-  body('email').trim().optional({ nullable: true }).isEmail().withMessage('Format email tidak valid'),
-  body('password').optional({ checkFalsy: true }).isLength({ min: 6 }).withMessage('Password minimal 6 karakter'),
+  body('email').trim().optional({ values: 'falsy' }).isEmail().withMessage('Format email tidak valid'),
+  body('password').optional({ values: 'falsy' }).isLength({ min: 6 }).withMessage('Password minimal 6 karakter'),
   validateResult
 ];
 
@@ -83,7 +83,7 @@ export const employeeCreateValidator = [
       return true;
     }),
   body('name').trim().notEmpty().withMessage('Nama lengkap wajib diisi'),
-  body('email').trim().optional({ nullable: true }).isEmail().withMessage('Format email tidak valid'),
+  body('email').optional({ values: 'falsy' }).trim().isEmail().withMessage('Format email tidak valid'),
   body('password').isLength({ min: 6 }).withMessage('Password minimal 6 karakter'),
   body('role_id').notEmpty().withMessage('Role wajib dipilih'),
   validateResult
@@ -103,8 +103,8 @@ export const employeeUpdateValidator = [
       return true;
     }),
   body('name').trim().notEmpty().withMessage('Nama lengkap wajib diisi'),
-  body('email').trim().optional({ nullable: true }).isEmail().withMessage('Format email tidak valid'),
-  body('password').optional({ checkFalsy: true }).isLength({ min: 6 }).withMessage('Password minimal 6 karakter'),
+  body('email').trim().optional({ values: 'falsy' }).isEmail().withMessage('Format email tidak valid'),
+  body('password').optional({ values: 'falsy' }).isLength({ min: 6 }).withMessage('Password minimal 6 karakter'),
   body('role_id').notEmpty().withMessage('Role wajib dipilih'),
   body('status').notEmpty().withMessage('Status aktif wajib dipilih'),
   validateResult
@@ -124,7 +124,7 @@ export const barangCreateValidator = [
       return true;
     }),
   body('nama_barang').trim().notEmpty().withMessage('Nama barang wajib diisi'),
-  body('ukuran').trim().optional({ nullable: true }),
+  body('ukuran').trim().optional({ values: 'falsy' }),
   body('stok').isInt({ min: 0 }).withMessage('Stok minimal 0'),
   body('satuan').trim().notEmpty().withMessage('Satuan wajib diisi'),
   validateResult
@@ -146,7 +146,7 @@ export const barangUpdateValidator = [
       return true;
     }),
   body('nama_barang').trim().notEmpty().withMessage('Nama barang wajib diisi'),
-  body('ukuran').trim().optional({ nullable: true }),
+  body('ukuran').trim().optional({ values: 'falsy' }),
   body('stok').isInt({ min: 0 }).withMessage('Stok minimal 0'),
   body('satuan').trim().notEmpty().withMessage('Satuan wajib diisi'),
   validateResult
@@ -166,8 +166,8 @@ export const supplierCreateValidator = [
       return true;
     }),
   body('nama_supplier').trim().notEmpty().withMessage('Nama supplier wajib diisi'),
-  body('alamat').trim().optional({ nullable: true }),
-  body('npwp').trim().optional({ nullable: true }),
+  body('alamat').trim().optional({ values: 'falsy' }),
+  body('npwp').trim().optional({ values: 'falsy' }),
   validateResult
 ];
 
@@ -187,8 +187,8 @@ export const supplierUpdateValidator = [
       return true;
     }),
   body('nama_supplier').trim().notEmpty().withMessage('Nama supplier wajib diisi'),
-  body('alamat').trim().optional({ nullable: true }),
-  body('npwp').trim().optional({ nullable: true }),
+  body('alamat').trim().optional({ values: 'falsy' }),
+  body('npwp').trim().optional({ values: 'falsy' }),
   validateResult
 ];
 

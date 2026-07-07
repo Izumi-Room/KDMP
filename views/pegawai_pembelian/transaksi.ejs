@@ -59,7 +59,9 @@
                   </div>
 
                   <button type="button" class="btn btn-danger btn-sm w-100 d-flex align-items-center justify-content-center gap-1 add-to-cart-btn" 
-                    onclick="addToRestock(<%= item.id %>, '<%= item.nama_barang %>', '<%= item.satuan %>');">
+                    data-id="<%= item.id %>"
+                    data-name="<%= item.nama_barang %>"
+                    data-satuan="<%= item.satuan %>">
                     <i class="bi bi-plus-lg"></i>
                     <span>Tambahkan</span>
                   </button>
@@ -75,15 +77,16 @@
     <div class="pos-cart">
       <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
         <h3 class="h6 fw-bold text-secondary mb-0"><i class="bi bi-bag-plus me-2"></i>Daftar Barang Masuk</h3>
-        <button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="clearRestock();">Kosongkan</button>
+        <button type="button" id="clearRestockBtn" class="btn btn-sm btn-outline-danger border-0">Kosongkan</button>
       </div>
 
       <!-- Restock Cart items -->
-      <div class="pos-cart-items" id="cartContainer">
+      <div class="pos-cart-items">
         <div class="text-center text-muted py-5" id="emptyCartMessage">
           <i class="bi bi-box-seam fs-2 d-block mb-2 text-white-50"></i>
           Daftar restok kosong
         </div>
+        <div id="cartContainer"></div>
       </div>
 
       <!-- Summary -->
@@ -93,7 +96,7 @@
           <span class="fs-4 fw-bold text-danger" id="cartTotalLabel">Rp 0</span>
         </div>
 
-        <button type="button" class="btn btn-danger w-100 py-3 fw-bold" id="restockBtn" onclick="submitRestock();">
+        <button type="button" class="btn btn-danger w-100 py-3 fw-bold" id="restockBtn">
           <i class="bi bi-save-fill me-1"></i> Simpan Transaksi Pembelian
         </button>
       </div>
@@ -118,6 +121,37 @@
         card.style.display = 'none';
       }
     });
+  });
+
+  // Catalog item click delegation
+  document.getElementById('catalogGrid').addEventListener('click', function(e) {
+    const btn = e.target.closest('.add-to-cart-btn');
+    if (btn) {
+      const id = parseInt(btn.dataset.id);
+      const name = btn.dataset.name;
+      const satuan = btn.dataset.satuan;
+      addToRestock(id, name, satuan);
+    }
+  });
+
+  // Action listeners
+  document.getElementById('clearRestockBtn').addEventListener('click', clearRestock);
+  document.getElementById('restockBtn').addEventListener('click', submitRestock);
+
+  // Cart container delegation
+  const cartContainer = document.getElementById('cartContainer');
+  cartContainer.addEventListener('change', function(e) {
+    if (e.target.classList.contains('restock-qty-input')) {
+      const index = parseInt(e.target.dataset.index);
+      updateQty(index, e.target.value);
+    }
+  });
+  cartContainer.addEventListener('click', function(e) {
+    const btn = e.target.closest('.remove-from-restock-btn');
+    if (btn) {
+      const index = parseInt(btn.dataset.index);
+      removeFromRestock(index);
+    }
   });
 
   // Cart operations
@@ -174,16 +208,13 @@
     
     if (restockList.length === 0) {
       container.innerHTML = '';
-      container.appendChild(emptyMsg);
+      emptyMsg.classList.remove('d-none');
       document.getElementById('cartTotalLabel').innerText = 'Rp 0';
       return;
     }
 
-    if (emptyMsg.parentNode === container) {
-      container.innerHTML = '';
-    } else {
-      container.innerHTML = '';
-    }
+    emptyMsg.classList.add('d-none');
+    container.innerHTML = '';
 
     let total = 0;
     restockList.forEach((item, index) => {
@@ -198,8 +229,8 @@
           <div class="text-secondary" style="font-size: 11px;">Rp ${item.harga_satuan.toLocaleString('id-ID')} / ${item.satuan}</div>
         </div>
         <div class="d-flex align-items-center gap-2">
-          <input type="number" class="form-control text-center py-1 px-2" value="${item.qty}" min="1" style="width: 50px; font-size: 12px;" onchange="updateQty(${index}, this.value);">
-          <button type="button" class="btn btn-outline-danger btn-sm border-0" onclick="removeFromRestock(${index});"><i class="bi bi-trash"></i></button>
+          <input type="number" class="form-control text-center py-1 px-2 restock-qty-input" data-index="${index}" value="${item.qty}" min="1" style="width: 50px; font-size: 12px;">
+          <button type="button" class="btn btn-outline-danger btn-sm border-0 remove-from-restock-btn" data-index="${index}"><i class="bi bi-trash"></i></button>
         </div>
       `;
       container.appendChild(row);

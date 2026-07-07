@@ -59,12 +59,12 @@
 </head>
 <body>
   <!-- Print button visible only on screen -->
-  <button onclick="window.print();" class="no-print-btn">CETAK STRUK BELANJA</button>
+  <button id="printBtn" class="no-print-btn">CETAK STRUK BELANJA</button>
 
   <div class="text-center">
-    <div class="bold" style="font-size: 14px;"><%= user.umkm?.nama_umkm || 'AIWarung' %></div>
-    <div><%= user.umkm?.alamat || '-' %></div>
-    <div>Telp: <%= user.umkm?.telepon || '-' %></div>
+    <div class="bold" style="font-size: 14px;"><%= umkm?.nama_umkm || 'AIWarung' %></div>
+    <div><%= umkm?.alamat || '-' %></div>
+    <div>Telp: <%= umkm?.telepon || '-' %></div>
     <div class="divider"></div>
   </div>
 
@@ -130,6 +130,9 @@
     window.addEventListener('load', function() {
       // Auto triggers window print
       setTimeout(() => { window.print(); }, 500);
+    });
+    document.getElementById('printBtn').addEventListener('click', function() {
+      window.print();
     });
   </script>
 </body>

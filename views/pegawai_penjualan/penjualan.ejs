@@ -1,0 +1,105 @@
+<%- include('../partials/header') %>
+<%- include('../partials/sidebar') %>
+
+<div class="main-wrapper">
+  <div class="page-header-nav">
+    <div>
+      <h1 class="h3 fw-bold mb-0">Riwayat Penjualan</h1>
+      <p class="text-secondary mb-0" style="font-size: 14px;">Daftar dan riwayat transaksi penjualan kasir</p>
+    </div>
+  </div>
+
+  <%- include('../partials/alerts') %>
+
+  <!-- Filters Area -->
+  <div class="glass-card p-4 mb-4 fade-in">
+    <form action="/kasir/penjualan" method="GET">
+      <div class="row g-3 align-items-end">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+          <label class="form-label fw-semibold text-secondary">Pilih Bulan</label>
+          <select name="bulan" class="form-select form-control-custom">
+            <% Object.keys(months).forEach(num => { %>
+              <option value="<%= num %>" <%= parseInt(num, 10) === bulan ? 'selected' : '' %>><%= months[num] %></option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+          <label class="form-label fw-semibold text-secondary">Pilih Tahun</label>
+          <select name="tahun" class="form-select form-control-custom">
+            <% years.forEach(yr => { %>
+              <option value="<%= yr %>" <%= yr === tahun ? 'selected' : '' %>><%= yr %></option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="col-12 col-sm-auto">
+          <button type="submit" class="btn btn-primary-custom w-100">
+            <i class="bi bi-funnel me-1"></i> Filter
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Report Data Table -->
+  <div class="glass-card fade-in">
+    <div class="table-responsive">
+      <table class="table custom-table mb-0">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Tanggal</th>
+            <th>No Faktur</th>
+            <th>Kasir (Pegawai)</th>
+            <th>Barang Belanja (Qty)</th>
+            <th>Total Belanja</th>
+            <th class="text-end">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (report.length === 0) { %>
+            <tr>
+              <td colspan="7" class="text-center text-muted py-3">Tidak ada transaksi penjualan pada bulan ini.</td>
+            </tr>
+          <% } else { %>
+            <% let grandTotal = 0; %>
+            <% report.forEach((sale, index) => { %>
+              <% grandTotal += parseFloat(sale.total_harga); %>
+              <tr>
+                <td><%= index + 1 %></td>
+                <td><%= sale.tanggal %></td>
+                <td class="fw-semibold text-primary"><%= sale.no_faktur %></td>
+                <td><%= sale.user?.name || '-' %></td>
+                <td>
+                  <ul class="list-unstyled mb-0" style="font-size: 13px;">
+                    <% sale.details.forEach(det => { %>
+                      <li><i class="bi bi-caret-right-fill text-muted me-1"></i><%= det.barang?.nama_barang || 'Barang Dihapus' %> (<%= det.qty %> <%= det.barang?.satuan || 'pcs' %>)</li>
+                    <% }) %>
+                  </ul>
+                </td>
+                <td class="fw-bold text-success">
+                  Rp <%= Number(sale.total_harga).toLocaleString('id-ID') %>
+                </td>
+                <td class="text-end">
+                  <a href="/kasir/transaksi/<%= sale.id %>/print" target="_blank" class="btn btn-outline-primary btn-sm border-0" data-bs-toggle="tooltip" title="Cetak Struk">
+                    <i class="bi bi-printer-fill"></i>
+                  </a>
+                </td>
+              </tr>
+            <% }) %>
+            <tr class="bg-light">
+              <td colspan="5" class="text-end fw-bold">Total Omset Bulanan:</td>
+              <td class="fw-bold text-success" style="font-size: 16px;">
+                Rp <%= Number(grandTotal).toLocaleString('id-ID') %>
+              </td>
+              <td></td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

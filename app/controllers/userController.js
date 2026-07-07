@@ -80,7 +80,7 @@ export class UserController {
       await User.create({
         username,
         name,
-        email,
+        email: email || null,
         password: hashedPassword,
         role_id,
         status: true,
@@ -93,6 +93,28 @@ export class UserController {
       console.error(err);
       req.session.errors = { general: err.message };
       res.redirect('back');
+    }
+  }
+
+  static async show(req, res) {
+    const { id } = req.params;
+    const umkmId = req.session.user.umkm_id;
+
+    try {
+      const user = await User.findOne({
+        where: { id, umkm_id: umkmId },
+        include: [{ model: Role, as: 'role' }]
+      });
+
+      if (!user) {
+        req.session.flash = { error: 'Pegawai tidak ditemukan.' };
+        return res.redirect('/admin-umkm/user');
+      }
+
+      res.render('admin_umkm/user/show', { title: 'Detail Pegawai', employee: user });
+    } catch (err) {
+      console.error(err);
+      res.status(500).render('error', { message: 'Gagal memuat detail pegawai', error: err });
     }
   }
 
@@ -143,7 +165,7 @@ export class UserController {
       const updateData = {
         username,
         name,
-        email,
+        email: email || null,
         role_id,
         status: status === '1' || status === 'true' || status === true
       };

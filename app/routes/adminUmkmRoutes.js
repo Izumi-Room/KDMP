@@ -27,6 +27,7 @@ router.post('/profile', AdminUmkmController.updateProfile);
 router.get('/user', UserController.index);
 router.get('/user/create', UserController.create);
 router.post('/user', employeeCreateValidator, UserController.store);
+router.get('/user/:id', UserController.show);
 router.get('/user/:id/edit', UserController.edit);
 router.post('/user/:id', employeeUpdateValidator, UserController.update);
 router.post('/user/:id/delete', UserController.destroy);

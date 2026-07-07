@@ -75,10 +75,13 @@
                 </td>
                 <td class="text-end">
                   <div class="d-flex justify-content-end gap-2">
+                    <a href="/admin-umkm/user/<%= emp.id %>" class="btn btn-outline-info btn-sm border-0" data-bs-toggle="tooltip" title="Detail Pegawai">
+                      <i class="bi bi-eye-fill"></i>
+                    </a>
                     <a href="/admin-umkm/user/<%= emp.id %>/edit" class="btn btn-outline-warning btn-sm border-0" data-bs-toggle="tooltip" title="Edit Pegawai">
                       <i class="bi bi-pencil-square"></i>
                     </a>
-                    <form action="/admin-umkm/user/<%= emp.id %>/delete" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data pegawai ini?');" class="m-0">
+                    <form action="/admin-umkm/user/<%= emp.id %>/delete" method="POST" class="m-0 delete-user-form">
                       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                       <button type="submit" class="btn btn-outline-danger btn-sm border-0" data-bs-toggle="tooltip" title="Hapus Pegawai">
                         <i class="bi bi-trash-fill"></i>
@@ -115,5 +118,15 @@
     <% } %>
   </div>
 </div>
+
+<script>
+  document.querySelectorAll('.delete-user-form').forEach(item => {
+    item.addEventListener('submit', function(e) {
+      if (!confirm('Apakah Anda yakin ingin menghapus data pegawai ini?')) {
+        e.preventDefault();
+      }
+    });
+  });
+</script>
 
 <%- include('../../partials/footer') %>

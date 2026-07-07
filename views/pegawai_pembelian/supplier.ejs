@@ -1,25 +1,19 @@
-<%- include('../../partials/header') %>
-<%- include('../../partials/sidebar') %>
+<%- include('../partials/header') %>
+<%- include('../partials/sidebar') %>
 
 <div class="main-wrapper">
   <div class="page-header-nav">
     <div>
       <h1 class="h3 fw-bold mb-0">Mitra Supplier</h1>
-      <p class="text-secondary mb-0" style="font-size: 14px;">Administrasi vendor supplier mitra penyedia stock barang</p>
-    </div>
-    <div>
-      <a href="/admin-umkm/supplier/create" class="btn btn-primary-custom d-flex align-items-center gap-2">
-        <i class="bi bi-plus-circle"></i>
-        <span>Tambah Supplier</span>
-      </a>
+      <p class="text-secondary mb-0" style="font-size: 14px;">Daftar vendor supplier mitra penyedia stock barang</p>
     </div>
   </div>
 
-  <%- include('../../partials/alerts') %>
+  <%- include('../partials/alerts') %>
 
   <!-- Search area -->
   <div class="glass-card p-3 mb-4 fade-in">
-    <form action="/admin-umkm/supplier" method="GET" class="row g-3 align-items-center">
+    <form action="/pembelian/supplier" method="GET" class="row g-3 align-items-center">
       <div class="col-md-6 col-lg-4">
         <div class="input-group">
           <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-secondary"></i></span>
@@ -29,7 +23,7 @@
       <div class="col-auto">
         <button type="submit" class="btn btn-primary-custom">Filter</button>
         <% if (search) { %>
-          <a href="/admin-umkm/supplier" class="btn btn-outline-secondary ms-1" style="border-radius: 8px; padding: 10px 20px;">Reset</a>
+          <a href="/pembelian/supplier" class="btn btn-outline-secondary ms-1" style="border-radius: 8px; padding: 10px 20px;">Reset</a>
         <% } %>
       </div>
     </form>
@@ -46,13 +40,12 @@
             <th>Nama Supplier</th>
             <th>Alamat Mitra</th>
             <th>NPWP Vendor</th>
-            <th class="text-end">Aksi</th>
           </tr>
         </thead>
         <tbody>
           <% if (suppliers.length === 0) { %>
             <tr>
-              <td colspan="6" class="text-center text-muted">Belum ada mitra supplier terdaftar.</td>
+              <td colspan="5" class="text-center text-muted py-3">Belum ada mitra supplier terdaftar.</td>
             </tr>
           <% } else { %>
             <% suppliers.forEach((sup, index) => { %>
@@ -63,19 +56,6 @@
                 <td class="fw-bold text-dark"><%= sup.nama_supplier %></td>
                 <td><%= sup.alamat || '-' %></td>
                 <td><%= sup.npwp || '-' %></td>
-                <td class="text-end">
-                  <div class="d-flex justify-content-end gap-2">
-                    <a href="/admin-umkm/supplier/<%= sup.id %>/edit" class="btn btn-outline-warning btn-sm border-0" data-bs-toggle="tooltip" title="Edit Supplier">
-                      <i class="bi bi-pencil-square"></i>
-                    </a>
-                    <form action="/admin-umkm/supplier/<%= sup.id %>/delete" method="POST" class="m-0 delete-supplier-form">
-                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                      <button type="submit" class="btn btn-outline-danger btn-sm border-0" data-bs-toggle="tooltip" title="Hapus Supplier">
-                        <i class="bi bi-trash-fill"></i>
-                      </button>
-                    </form>
-                  </div>
-                </td>
               </tr>
             <% }) %>
           <% } %>
@@ -89,15 +69,15 @@
         <nav aria-label="Page navigation">
           <ul class="pagination pagination-sm mb-0">
             <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
-              <a class="page-link" href="/admin-umkm/supplier?page=<%= currentPage - 1 %>&search=<%= search %>">Sebelumnya</a>
+              <a class="page-link" href="/pembelian/supplier?page=<%= currentPage - 1 %>&search=<%= search %>">Sebelumnya</a>
             </li>
             <% for(let i = 1; i <= totalPages; i++) { %>
               <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                <a class="page-link" href="/admin-umkm/supplier?page=<%= i %>&search=<%= search %>"><%= i %></a>
+                <a class="page-link" href="/pembelian/supplier?page=<%= i %>&search=<%= search %>"><%= i %></a>
               </li>
             <% } %>
             <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
-              <a class="page-link" href="/admin-umkm/supplier?page=<%= currentPage + 1 %>&search=<%= search %>">Selanjutnya</a>
+              <a class="page-link" href="/pembelian/supplier?page=<%= currentPage + 1 %>&search=<%= search %>">Selanjutnya</a>
             </li>
           </ul>
         </nav>
@@ -106,14 +86,4 @@
   </div>
 </div>
 
-<script>
-  document.querySelectorAll('.delete-supplier-form').forEach(item => {
-    item.addEventListener('submit', function(e) {
-      if (!confirm('Apakah Anda yakin ingin menghapus supplier ini?')) {
-        e.preventDefault();
-      }
-    });
-  });
-</script>
-
-<%- include('../../partials/footer') %>
+<%- include('../partials/footer') %>
